@@ -173,7 +173,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: 5px;
     padding: 12px 10px;
     background: rgba(18, 24, 38, 0.58);
     border: 1px solid rgba(255, 255, 255, 0.38);
@@ -262,46 +262,51 @@
 
   .shape-tool-group {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
     width: 36px;
-    height: 36px;
   }
   .shape-tool-group > .tool-btn {
     width: 36px;
     height: 36px;
   }
+
+  /* 方塊 / 圓形 / 直線：改成內嵌式展開，不再往右浮出，避免滑鼠移過去時消失 */
   .shape-flyout {
-    position: absolute;
-    left: 46px;
-    top: 50%;
-    transform: translateY(-50%) translateX(-8px);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px;
-    border-radius: 999px;
-    background: rgba(18, 24, 38, 0.72);
-    border: 1px solid rgba(255,255,255,0.38);
-    box-shadow: 0 8px 26px rgba(0,0,0,0.28), inset 0 0 14px rgba(255,255,255,0.12);
-    backdrop-filter: blur(18px) saturate(145%);
-    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
-    z-index: 120;
+    transition: grid-template-rows 0.22s ease, opacity 0.16s ease;
   }
-  .shape-tool-group:hover .shape-flyout {
+  .shape-tool-group:hover .shape-flyout,
+  .shape-tool-group:focus-within .shape-flyout,
+  .shape-tool-group.open .shape-flyout {
+    grid-template-rows: 1fr;
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(-50%) translateX(0);
   }
-  .shape-tool-group:hover > .tool-btn .tool-tooltip {
-    opacity: 0;
+  .shape-flyout-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
   .shape-option {
-    width: 32px;
-    height: 32px;
-    font-size: 15px;
-    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    font-size: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.11);
+    border: 1.2px solid rgba(255,255,255,0.42);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18), inset 0 0 9px rgba(255,255,255,0.10);
+  }
+  .shape-option:hover {
+    transform: scale(1.08);
   }
   .tool-divider {
     width: 24px;
@@ -677,17 +682,19 @@
         <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">
           <i class="ti ti-eraser"></i><span class="tool-tooltip">Eraser</span>
         </button>
-        <div class="shape-tool-group">
-          <button class="tool-btn" id="tool-rect" onclick="setTool('rect')">
-            <span class="tool-shape-icon square">▢</span><span class="tool-tooltip">Shape</span>
+        <div class="shape-tool-group" id="shape-tool-group">
+          <button class="tool-btn" id="tool-rect" onclick="setTool('rect')" title="Rectangle">
+            <span id="shape-main-icon" class="tool-shape-icon square">▢</span><span class="tool-tooltip">Shape</span>
           </button>
           <div class="shape-flyout">
-            <button class="tool-btn shape-option" id="tool-circle" onclick="setTool('circle')" title="Circle">
-              <span class="tool-shape-icon circle">○</span><span class="tool-tooltip">Circle</span>
-            </button>
-            <button class="tool-btn shape-option" id="tool-line" onclick="setTool('line')" title="Line">
-              <span class="tool-shape-icon line">╱</span><span class="tool-tooltip">Line</span>
-            </button>
+            <div class="shape-flyout-inner">
+              <button class="tool-btn shape-option" id="tool-circle" onclick="setTool('circle')" title="Circle">
+                <span class="tool-shape-icon circle">○</span><span class="tool-tooltip">Circle</span>
+              </button>
+              <button class="tool-btn shape-option" id="tool-line" onclick="setTool('line')" title="Line">
+                <span class="tool-shape-icon line">╱</span><span class="tool-tooltip">Line</span>
+              </button>
+            </div>
           </div>
         </div>
         <button class="tool-btn" id="tool-arrow" onclick="setTool('arrow')">
@@ -1186,6 +1193,23 @@ function refreshColorPreview() {
   if (activeTextInput && currentTool === 'text') activeTextInput.style.color = color;
 }
 
+function updateShapeMainIcon(tool) {
+  const icon = document.getElementById('shape-main-icon');
+  if (!icon) return;
+
+  icon.className = 'tool-shape-icon';
+  if (tool === 'circle') {
+    icon.classList.add('circle');
+    icon.textContent = '○';
+  } else if (tool === 'line') {
+    icon.classList.add('line');
+    icon.textContent = '╱';
+  } else {
+    icon.classList.add('square');
+    icon.textContent = '▢';
+  }
+}
+
 function setTool(tool) {
   currentTool = tool;
   document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
@@ -1194,6 +1218,7 @@ function setTool(tool) {
   if (tool === 'rect' || tool === 'circle' || tool === 'line') {
     const shapeMainBtn = document.getElementById('tool-rect');
     if (shapeMainBtn) shapeMainBtn.classList.add('active');
+    updateShapeMainIcon(tool);
   }
 
   drawCanvas.style.pointerEvents = (tool === 'select') ? 'none' : 'auto';
