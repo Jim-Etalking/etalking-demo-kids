@@ -302,6 +302,9 @@
   :fullscreen #topbar-right { pointer-events: auto; }
   :fullscreen #timer-display { background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); border-color: rgba(255,255,255,0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
   :fullscreen #app { background: #000; }
+  :fullscreen #main,
+  :fullscreen #pdf-area { background: #000; }
+  :fullscreen #canvas-wrapper { box-shadow: none; }
 </style>
 </head>
 <body>
@@ -446,11 +449,18 @@ async function renderPage(num) {
   const page = await pdfDoc.getPage(num);
   
   const container = document.getElementById('pdf-area');
-  const maxWidth = container.clientWidth - 40;  
-  const maxHeight = container.clientHeight - 40;
+  const isFullscreen = !!document.fullscreenElement;
+
+  // 一般模式：完整顯示 PDF，不裁切。
+  // 全螢幕模式：自動滿版填滿畫面，讓黑邊消失；多出的部分由 #pdf-area overflow:hidden 裁掉。
+  const padding = isFullscreen ? 0 : 40;
+  const maxWidth = Math.max(1, container.clientWidth - padding);
+  const maxHeight = Math.max(1, container.clientHeight - padding);
 
   const vpUnscaled = page.getViewport({ scale: 1 });
-  const scale = Math.min(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
+  const fitScale = Math.min(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
+  const fillScale = Math.max(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
+  const scale = isFullscreen ? fillScale : fitScale;
   const vp = page.getViewport({ scale: scale });
   
   canvas.width = vp.width; 
@@ -469,6 +479,12 @@ let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => { if (pdfDoc) renderPage(currentPage); }, 300);
+});
+
+// 進出全螢幕後重新計算比例：一般模式 contain，全螢幕 cover。
+document.addEventListener('fullscreenchange', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { if (pdfDoc) renderPage(currentPage); }, 150);
 });
 
 function updateNav() {
