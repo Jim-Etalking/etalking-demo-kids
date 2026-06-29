@@ -67,27 +67,27 @@
     z-index: 200;
   }
 
-  /* 左側觸發邊緣：改成跟右側一樣會跟轉盤顏色連動的毛玻璃 */
+  /* 左側觸發邊緣：保留毛玻璃，但改成高對比深色玻璃，避免圖示看不清楚 */
   #tool-edge {
     width: 16px;
     height: 72px;
-    background: var(--theme-bg);
-    border: 1.5px solid rgba(255,255,255,0.6);
+    background: rgba(18, 24, 38, 0.58);
+    border: 1.5px solid rgba(255,255,255,0.45);
     border-left: none;
     border-radius: 0 10px 10px 0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: var(--theme-hex);
-    box-shadow: 4px 4px 18px rgba(0,0,0,0.12), inset 0 0 12px rgba(255,255,255,0.45);
-    backdrop-filter: blur(16px) saturate(130%);
-    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    color: #fff;
+    box-shadow: 4px 4px 22px rgba(0,0,0,0.35), inset 0 0 18px rgba(255,255,255,0.12);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
     transition: opacity 0.2s, width 0.2s, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
   #tool-hub:hover #tool-edge { opacity: 0; width: 0; }
   
-  /* 左側彈出面板：白色半透明毛玻璃，與右側 feature-panel 視覺統一 */
+  /* 左側彈出面板：深色半透明毛玻璃，讓白色工具圖示更清楚 */
   #tool-panel {
     position: absolute;
     left: 0;
@@ -96,15 +96,15 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
+    gap: 6px;
     padding: 12px 10px;
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(18, 24, 38, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.38);
     border-left: none;
     border-radius: 0 14px 14px 0;
-    box-shadow: 8px 8px 40px rgba(0,0,0,0.15), inset 0 0 24px rgba(255,255,255,0.6);
-    backdrop-filter: blur(24px) saturate(130%);
-    -webkit-backdrop-filter: blur(24px) saturate(130%);
+    box-shadow: 8px 8px 40px rgba(0,0,0,0.35), inset 0 0 24px rgba(255,255,255,0.12);
+    backdrop-filter: blur(26px) saturate(150%);
+    -webkit-backdrop-filter: blur(26px) saturate(150%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s, transform 0.3s, background 0.3s ease;
@@ -115,50 +115,62 @@
     transform: translateY(-50%) translateX(0);
   }
   
-  /* 左側工具按鈕：顏色跟隨轉盤主題 */
+  /* 左側工具按鈕：一般狀態改成白色圖示，active 才用主題色 */
   .tool-btn {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--theme-bg);
-    border: 1.5px solid rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.16);
+    border: 1.5px solid rgba(255,255,255,0.55);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 15px;
-    color: var(--theme-hex);
+    font-size: 16px;
+    color: #fff;
     position: relative;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1), inset 0 0 10px rgba(255,255,255,0.35);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 0 12px rgba(255,255,255,0.16);
     transition: transform 0.2s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
   .tool-btn:hover {
-    background: rgba(255,255,255,0.9);
+    background: var(--theme-bg);
     transform: scale(1.12);
-    color: var(--theme-hex);
-    border-color: var(--theme-hex);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    color: #fff;
+    border-color: rgba(255,255,255,0.9);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.18), 0 6px 18px rgba(0,0,0,0.28), inset 0 0 14px rgba(255,255,255,0.18);
   }
   .tool-btn.active {
     background: var(--theme-hex);
     color: #fff;
-    border-color: var(--theme-hex);
-    box-shadow: 0 0 16px var(--theme-hex);
+    border-color: rgba(255,255,255,0.95);
+    box-shadow: 0 0 18px var(--theme-hex), inset 0 0 10px rgba(255,255,255,0.22);
+  }
+  .tool-letter-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    font-size: 19px;
+    font-weight: 900;
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1;
   }
   .tool-divider {
     width: 24px;
     height: 1px;
-    background: rgba(255,255,255,0.65);
+    background: rgba(255,255,255,0.42);
     margin: 2px 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
   }
   .tool-tooltip {
     position: absolute;
     left: 46px;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255,255,255,0.75);
-    color: var(--theme-hex);
+    background: rgba(18,24,38,0.86);
+    color: #fff;
     font-size: 10px;
     font-weight: 800;
     padding: 4px 8px;
@@ -166,12 +178,12 @@
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
-    border: 1px solid rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.42);
     backdrop-filter: blur(14px) saturate(130%);
     -webkit-backdrop-filter: blur(14px) saturate(130%);
     transition: opacity 0.15s, color 0.3s ease;
     z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.16);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.32);
   }
   .tool-btn:hover .tool-tooltip { opacity: 1; }
 
@@ -305,7 +317,7 @@
           <i class="ti ti-pointer"></i><span class="tool-tooltip">Pointer</span>
         </button>
         <button class="tool-btn" id="tool-text" onclick="setTool('text')">
-          <i class="ti ti-writing"></i><span class="tool-tooltip">Text</span>
+          <span class="tool-letter-icon">T</span><span class="tool-tooltip">Text</span>
         </button>
         <button class="tool-btn" id="tool-pen" onclick="setTool('pen')">
           <i class="ti ti-pencil"></i><span class="tool-tooltip">Pen</span>
