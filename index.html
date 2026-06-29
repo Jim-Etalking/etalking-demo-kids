@@ -502,6 +502,43 @@
     color: rgba(255,255,255,0.84);
     text-shadow: 0 1px 5px rgba(0,0,0,0.36);
   }
+  #dial-level-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 7px;
+    border-radius: 999px;
+    background: rgba(18, 24, 38, 0.18);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: inset 0 0 8px rgba(255,255,255,0.06), 0 3px 10px rgba(0,0,0,0.10);
+    backdrop-filter: blur(8px) saturate(125%);
+    -webkit-backdrop-filter: blur(8px) saturate(125%);
+    pointer-events: auto;
+  }
+  .dial-level-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1.6px solid rgba(255,255,255,0.86);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.24), inset 0 0 5px rgba(255,255,255,0.22);
+    opacity: 0.84;
+    transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+  }
+  .dial-level-dot:hover {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  .dial-level-dot.active {
+    transform: scale(1.30);
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.38), 0 0 15px currentColor, inset 0 0 5px rgba(255,255,255,0.26);
+  }
+  .dot-green  { background: #4caf50; color: #4caf50; }
+  .dot-yellow { background: #f9a825; color: #f9a825; }
+  .dot-red    { background: #ef5350; color: #ef5350; }
+  .dot-purple { background: #ab47bc; color: #ab47bc; }
 
   #card-list { position: absolute; left: 38px; bottom: 38px; width: 0; height: 0; }
   .pg-thumb-card { position: absolute; left: 0; bottom: 0; width: 76px; height: 57px; margin-left: -38px; margin-bottom: -28px; border-radius: 6px; background: var(--cat-bg); border: 2px solid var(--cat-border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, border-width 0.2s; }
@@ -779,6 +816,12 @@
           <div id="dial-page-inline">
             <input id="dial-page-input" type="number" min="1" value="1" onkeydown="handleDialPageKey(event)" onchange="goToDialPage(this.value)"/>
             <span id="dial-total-label">/ —</span>
+          </div>
+          <div id="dial-level-dots" aria-label="Jump to level">
+            <button type="button" class="dial-level-dot dot-green" title="Pre-Starter" onclick="jumpToLevel('green')"></button>
+            <button type="button" class="dial-level-dot dot-yellow" title="Starter" onclick="jumpToLevel('yellow')"></button>
+            <button type="button" class="dial-level-dot dot-red" title="L1-L2" onclick="jumpToLevel('red')"></button>
+            <button type="button" class="dial-level-dot dot-purple" title="L3" onclick="jumpToLevel('purple')"></button>
           </div>
         </div>
         <div id="card-list"></div>
@@ -1118,13 +1161,31 @@ function buildCatalog(total) {
 }
 
 // ⭐️ 在更新中心文字時，一併改變整體的 :root 變數，達成左右面板完美連動！
+function updateLevelDots(levelId) {
+  document.querySelectorAll('.dial-level-dot').forEach(dot => dot.classList.remove('active'));
+  const dot = document.querySelector(`.dot-${levelId}`);
+  if (dot) dot.classList.add('active');
+}
+
+function getFirstPageOfLevel(levelId) {
+  const found = catalogPages.find(p => p.lv === levelId);
+  return found ? found.num : 1;
+}
+
+async function jumpToLevel(levelId) {
+  if (!pdfDoc || !catalogPages.length) return;
+  const page = getFirstPageOfLevel(levelId);
+  await goToPage(page);
+}
+
 function updateCenterText(levelId) {
   const info = lvData[levelId];
   const textEl = document.getElementById('dial-center-text');
+  updateLevelDots(levelId);
   if (textEl.textContent !== info.name) {
     textEl.textContent = info.name;
     textEl.style.color = info.hex;
-    
+
     // 更新全域變數，左側 tool-hub 與右側 feature-hub 都會跟著變色！
     document.documentElement.style.setProperty('--theme-hex', info.hex);
     document.documentElement.style.setProperty('--theme-bg', info.bg);
