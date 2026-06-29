@@ -337,8 +337,66 @@
   #catalog-zone:hover #cat-trigger { background: rgba(255, 255, 255, 0.7); transform: scale(1.05); }
 
   .dial-track { position: absolute; left: 0; bottom: 0; width: 245px; height: 245px; border-radius: 0 100% 0 0; border-top: 1.5px dashed rgba(255, 255, 255, 0.6); border-right: 1.5px dashed rgba(255, 255, 255, 0.6); pointer-events: none; }
-  #dial-center-info { position: absolute; left: 105px; bottom: 105px; transform: translate(-50%, 50%); pointer-events: none; }
-  #dial-center-text { font-size: 26px; font-weight: 900; text-align: center; font-family: 'Segoe UI', 'Nunito', system-ui, sans-serif; letter-spacing: 0.5px; text-shadow: 0 2px 12px rgba(255, 255, 255, 1), 0 0 6px rgba(255, 255, 255, 0.8); transition: color 0.3s ease; white-space: nowrap; }
+  #dial-center-info {
+    position: absolute;
+    left: 105px;
+    bottom: 104px;
+    transform: translate(-50%, 50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 42;
+    pointer-events: none;
+  }
+  #dial-center-text {
+    font-size: 26px;
+    font-weight: 900;
+    text-align: center;
+    font-family: 'Segoe UI', 'Nunito', system-ui, sans-serif;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 12px rgba(255, 255, 255, 1), 0 0 6px rgba(255, 255, 255, 0.8);
+    transition: color 0.3s ease;
+    white-space: nowrap;
+  }
+  #dial-page-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 4px 7px;
+    border-radius: 999px;
+    background: rgba(18, 24, 38, 0.24);
+    border: 1px solid rgba(255,255,255,0.24);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.08), 0 4px 14px rgba(0,0,0,0.14);
+    backdrop-filter: blur(10px) saturate(130%);
+    -webkit-backdrop-filter: blur(10px) saturate(130%);
+    pointer-events: auto;
+  }
+  #dial-page-input {
+    width: 44px;
+    height: 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.42);
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 0 0 8px rgba(255,255,255,0.10);
+  }
+  #dial-page-input:focus {
+    border-color: rgba(255,255,255,0.85);
+    box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 8px rgba(255,255,255,0.12);
+  }
+  #dial-total-label {
+    min-width: 30px;
+    font-size: 11px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.84);
+    text-shadow: 0 1px 5px rgba(0,0,0,0.36);
+  }
 
   #card-list { position: absolute; left: 38px; bottom: 38px; width: 0; height: 0; }
   .pg-thumb-card { position: absolute; left: 0; bottom: 0; width: 76px; height: 57px; margin-left: -38px; margin-bottom: -28px; border-radius: 6px; background: var(--cat-bg); border: 2px solid var(--cat-border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, border-width 0.2s; }
@@ -347,7 +405,7 @@
   .pg-thumb-card:hover { border-width: 3px; z-index: 20 !important; filter: brightness(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
   .pg-thumb-card.active { border-width: 3px; box-shadow: 0 0 16px var(--cat-border); filter: brightness(1.1); }
 
-  /* 轉盤輔助控制：沿著轉盤的圓弧滑輪 + 空白處頁碼輸入 */
+  /* 轉盤輔助控制：沿著轉盤的圓弧滑輪，頁碼輸入整合在轉盤中心 */
   #dial-arc-ui {
     position: absolute;
     inset: 0;
@@ -393,89 +451,6 @@
     z-index: 38;
   }
   #dial-arc-thumb:active { cursor: grabbing; }
-  #dial-arc-label {
-    position: absolute;
-    left: 92px;
-    bottom: 112px;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.72);
-    text-shadow: 0 1px 6px rgba(0,0,0,0.38);
-    pointer-events: none;
-  }
-  #dial-page-jump {
-    position: absolute;
-    left: 72px;
-    bottom: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    padding: 8px 12px;
-    min-width: 132px;
-    border-radius: 16px;
-    background: rgba(18, 24, 38, 0.44);
-    border: 1px solid rgba(255,255,255,0.28);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 0 14px rgba(255,255,255,0.10);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-    pointer-events: auto;
-    z-index: 36;
-  }
-  .dial-page-title {
-    font-size: 10px;
-    font-weight: 900;
-    color: rgba(255,255,255,0.78);
-    letter-spacing: 0.7px;
-    text-shadow: 0 1px 5px rgba(0,0,0,0.35);
-  }
-  .dial-jump-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  #dial-page-input {
-    width: 52px;
-    height: 28px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.46);
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 800;
-    text-align: center;
-    outline: none;
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.10);
-  }
-  #dial-page-input:focus {
-    border-color: rgba(255,255,255,0.82);
-    box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 10px rgba(255,255,255,0.12);
-  }
-  #dial-total-label {
-    min-width: 38px;
-    font-size: 11px;
-    font-weight: 800;
-    color: rgba(255,255,255,0.72);
-  }
-  #dial-go-btn {
-    height: 28px;
-    padding: 0 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.52);
-    background: var(--theme-bg);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 900;
-    cursor: pointer;
-    text-shadow: 0 1px 5px rgba(0,0,0,0.32);
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.12);
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-  }
-  #dial-go-btn:hover {
-    transform: translateY(-1px);
-    background: var(--theme-hex);
-    border-color: rgba(255,255,255,0.86);
-  }
 
   /* 獨立定義轉盤縮圖上的顏色變數 */
   .lv-green  { --cat-bg: rgba(76, 175, 80, 0.25);  --cat-border: #4caf50; }
@@ -679,23 +654,20 @@
     <div id="catalog-zone" onwheel="onDialWheel(event)">
       <div id="cat-panel">
         <div class="dial-track"></div>
-        <div id="dial-center-info"><div id="dial-center-text">Loading...</div></div>
+        <div id="dial-center-info">
+          <div id="dial-center-text">Loading...</div>
+          <div id="dial-page-inline">
+            <input id="dial-page-input" type="number" min="1" value="1" onkeydown="handleDialPageKey(event)" onchange="goToDialPage(this.value)"/>
+            <span id="dial-total-label">/ —</span>
+          </div>
+        </div>
         <div id="card-list"></div>
         <div id="dial-arc-ui">
           <svg id="dial-arc-nav" viewBox="0 0 330 330" aria-hidden="true">
             <path id="dial-arc-track"></path>
             <path id="dial-arc-progress"></path>
           </svg>
-          <div id="dial-arc-label">SLIDE</div>
           <button id="dial-arc-thumb" type="button" aria-label="Slide pages"></button>
-          <div id="dial-page-jump">
-            <span class="dial-page-title">PAGE</span>
-            <div class="dial-jump-row">
-              <input id="dial-page-input" type="number" min="1" value="1" onkeydown="handleDialPageKey(event)" onchange="goToDialPage(this.value)"/>
-              <span id="dial-total-label">/ —</span>
-              <button id="dial-go-btn" type="button" onclick="goToDialPage(document.getElementById('dial-page-input').value)">GO</button>
-            </div>
-          </div>
         </div>
       </div>
       <div id="cat-trigger"><i class="ti ti-layout-list"></i><span class="cat-label">MENU</span></div>
@@ -978,6 +950,7 @@ function loadPDFFile(input) {
 ═══════════════════════════════════════════════════ */
 let catalogPages = [];
 let dialOffset = 0;       
+let dialPreviewPage = 1;  // 轉盤目前預覽到的頁碼，讓圓弧滑輪與滾輪同步
 const DIAL_GAP = 24;      
 const DIAL_RADIUS = 210; 
 
@@ -1047,10 +1020,10 @@ function onDialWheel(e) {
   const maxOffset = (catalogPages.length - 1) * DIAL_GAP - 40;
   if (dialOffset < minOffset) dialOffset = minOffset;
   if (dialOffset > maxOffset) dialOffset = maxOffset;
-  renderDialPositions();
+  renderDialPositions(true);
 }
 
-function renderDialPositions() {
+function renderDialPositions(syncPreviewControls = false) {
   let closestPage = null;
   let minDiff = 999;
 
@@ -1074,7 +1047,13 @@ function renderDialPositions() {
       if (isActive) card.classList.add('active'); else card.classList.remove('active');
     }
   });
-  if (closestPage) updateCenterText(closestPage.lv);
+  if (closestPage) {
+    dialPreviewPage = closestPage.num;
+    updateCenterText(closestPage.lv);
+    if (syncPreviewControls) {
+      updateDialControls(closestPage.num, pdfDoc ? pdfDoc.numPages : catalogPages.length);
+    }
+  }
 }
 
 async function renderAllThumbnails() {
