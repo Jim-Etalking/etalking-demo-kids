@@ -282,7 +282,7 @@
   .tool-btn:hover .tool-tooltip { opacity: 1; }
 
   /* ══════════════════════════════════════
-     RIGHT FEATURE HUB (⭐️ 完美對稱與連動的右側毛玻璃選單)
+     RIGHT FEATURE HUB (對稱與連動的右側毛玻璃選單)
   ══════════════════════════════════════ */
   #feature-hub { position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 200; }
   
@@ -724,6 +724,7 @@ async function loadPDF(src) {
     wrapper.style.display = 'inline-block';
     await renderPage(currentPage);
     updateNav();
+    resetPageTimer();
     document.getElementById('doc-title').textContent = (typeof src === 'string' ? src.split('/').pop().replace('.pdf','') : src.name) || 'PDF Document';
   } catch(e) {
     alert('Failed to load PDF: ' + e.message);
@@ -792,17 +793,24 @@ async function changePage(dir) {
   if (!pdfDoc) return;
   const np = currentPage + dir;
   if (np < 1 || np > pdfDoc.numPages) return;
+  if (np === currentPage) return;
   currentPage = np;
   await renderPage(currentPage);
   updateNav();
+  resetPageTimer();
 }
 
 async function goToPage(n) {
   if (!pdfDoc) return;
   n = Math.max(1, Math.min(pdfDoc.numPages, parseInt(n) || 1));
+  if (n === currentPage) {
+    updateNav();
+    return;
+  }
   currentPage = n;
   await renderPage(currentPage);
   updateNav();
+  resetPageTimer();
 }
 
 function clampPageNumber(n) {
@@ -1286,9 +1294,23 @@ function toggleFab(name) {
 }
 
 let timerSec = 0;
+let lastTimerPage = 1;
+
+function renderTimer() {
+  document.getElementById('timer-val').textContent =
+    String(Math.floor(timerSec / 60)).padStart(2, '0') + ':' +
+    String(timerSec % 60).padStart(2, '0');
+}
+
+function resetPageTimer() {
+  timerSec = 0;
+  lastTimerPage = currentPage;
+  renderTimer();
+}
+
 setInterval(() => {
   timerSec++;
-  document.getElementById('timer-val').textContent = String(Math.floor(timerSec/60)).padStart(2,'0') + ':' + String(timerSec%60).padStart(2,'0');
+  renderTimer();
 }, 1000);
 
 document.addEventListener('keydown', e => {
