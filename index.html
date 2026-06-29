@@ -234,80 +234,128 @@
     font-family: Georgia, 'Times New Roman', serif;
     line-height: 1;
   }
-  .tool-shape-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1em;
-    height: 1em;
-    line-height: 1;
-    font-weight: 900;
+  .shape-drawn-icon {
+    position: relative;
+    display: block;
+    width: 19px;
+    height: 19px;
   }
-  .tool-shape-icon.square {
-    font-size: 18px;
-    transform: translateY(-1px);
+  .shape-drawn-icon.shape-square::before,
+  .shape-drawn-icon.shape-circle::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border: 2.4px solid currentColor;
   }
+  .shape-drawn-icon.shape-circle::before {
+    border-radius: 50%;
+  }
+  .shape-drawn-icon.shape-line::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 8px;
+    width: 23px;
+    height: 3px;
+    border-radius: 999px;
+    background: currentColor;
+    transform: rotate(-42deg);
+    transform-origin: center;
+  }
+
   .tool-shape-icon.arrow {
     font-size: 21px;
     transform: translateX(1px);
   }
-  .tool-shape-icon.circle {
-    font-size: 20px;
-    transform: translateY(-1px);
-  }
-  .tool-shape-icon.line {
-    font-size: 22px;
-    transform: rotate(-18deg);
-  }
 
   .shape-tool-group {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
     width: 36px;
+    height: 36px;
   }
   .shape-tool-group > .tool-btn {
     width: 36px;
     height: 36px;
+    position: relative;
+    z-index: 270;
   }
 
-  /* 方塊 / 圓形 / 直線：改成內嵌式展開，不再往右浮出，避免滑鼠移過去時消失 */
+  /* 右側連體展開：像從方塊按鈕旁邊長出一段玻璃膠囊 */
   .shape-flyout {
-    display: grid;
-    grid-template-rows: 0fr;
+    position: absolute;
+    left: 26px;
+    top: 50%;
+    transform: translateY(-50%) translateX(-10px) scaleX(0.82);
+    transform-origin: left center;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 46px;
+    padding: 6px 8px 6px 22px;
+    border-radius: 0 999px 999px 0;
+    background: rgba(18, 24, 38, 0.78);
+    border: 1px solid rgba(255,255,255,0.42);
+    border-left: none;
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.30), inset 0 0 16px rgba(255,255,255,0.13);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
     opacity: 0;
     pointer-events: none;
-    transition: grid-template-rows 0.22s ease, opacity 0.16s ease;
+    transition: opacity 0.17s ease, transform 0.18s ease;
+    z-index: 260;
+  }
+  .shape-flyout::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: -1px;
+    width: 24px;
+    height: calc(100% + 2px);
+    background: rgba(18, 24, 38, 0.78);
+    border-top: 1px solid rgba(255,255,255,0.42);
+    border-bottom: 1px solid rgba(255,255,255,0.42);
+    box-shadow: inset 0 0 16px rgba(255,255,255,0.10);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    z-index: -1;
   }
   .shape-tool-group:hover .shape-flyout,
-  .shape-tool-group:focus-within .shape-flyout,
-  .shape-tool-group.open .shape-flyout {
-    grid-template-rows: 1fr;
+  .shape-tool-group:focus-within .shape-flyout {
     opacity: 1;
     pointer-events: auto;
+    transform: translateY(-50%) translateX(0) scaleX(1);
+  }
+  .shape-tool-group:hover > .tool-btn,
+  .shape-tool-group:focus-within > .tool-btn {
+    background: rgba(18, 24, 38, 0.82);
+    border-color: rgba(255,255,255,0.58);
+    box-shadow: 0 5px 16px rgba(0,0,0,0.26), inset 0 0 14px rgba(255,255,255,0.14);
+  }
+  .shape-tool-group:hover > .tool-btn .tool-tooltip {
+    opacity: 0;
   }
   .shape-flyout-inner {
-    overflow: hidden;
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    align-items: center;
+    gap: 7px;
   }
   .shape-option {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    min-height: 30px;
-    font-size: 14px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    flex: 0 0 auto;
     border-radius: 50%;
-    background: rgba(255,255,255,0.11);
-    border: 1.2px solid rgba(255,255,255,0.42);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.18), inset 0 0 9px rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.13);
+    border: 1.4px solid rgba(255,255,255,0.50);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.20), inset 0 0 10px rgba(255,255,255,0.12);
   }
   .shape-option:hover {
-    transform: scale(1.08);
+    transform: scale(1.10);
+    background: var(--theme-bg);
+    border-color: rgba(255,255,255,0.88);
   }
+
   .tool-divider {
     width: 24px;
     height: 1px;
@@ -684,15 +732,18 @@
         </button>
         <div class="shape-tool-group" id="shape-tool-group">
           <button class="tool-btn" id="tool-rect" onclick="setTool('rect')" title="Rectangle">
-            <span id="shape-main-icon" class="tool-shape-icon square">▢</span><span class="tool-tooltip">Shape</span>
+            <span id="shape-main-icon" class="shape-drawn-icon shape-square"></span><span class="tool-tooltip">Shape</span>
           </button>
           <div class="shape-flyout">
             <div class="shape-flyout-inner">
+              <button class="tool-btn shape-option" id="tool-shape-rect" onclick="setTool('rect')" title="Rectangle">
+                <span class="shape-drawn-icon shape-square"></span><span class="tool-tooltip">Rectangle</span>
+              </button>
               <button class="tool-btn shape-option" id="tool-circle" onclick="setTool('circle')" title="Circle">
-                <span class="tool-shape-icon circle">○</span><span class="tool-tooltip">Circle</span>
+                <span class="shape-drawn-icon shape-circle"></span><span class="tool-tooltip">Circle</span>
               </button>
               <button class="tool-btn shape-option" id="tool-line" onclick="setTool('line')" title="Line">
-                <span class="tool-shape-icon line">╱</span><span class="tool-tooltip">Line</span>
+                <span class="shape-drawn-icon shape-line"></span><span class="tool-tooltip">Line</span>
               </button>
             </div>
           </div>
@@ -1193,21 +1244,12 @@ function refreshColorPreview() {
   if (activeTextInput && currentTool === 'text') activeTextInput.style.color = color;
 }
 
-function updateShapeMainIcon(tool) {
-  const icon = document.getElementById('shape-main-icon');
-  if (!icon) return;
+function updateShapeOptionActive(tool) {
+  document.querySelectorAll('.shape-option').forEach(btn => btn.classList.remove('active'));
 
-  icon.className = 'tool-shape-icon';
-  if (tool === 'circle') {
-    icon.classList.add('circle');
-    icon.textContent = '○';
-  } else if (tool === 'line') {
-    icon.classList.add('line');
-    icon.textContent = '╱';
-  } else {
-    icon.classList.add('square');
-    icon.textContent = '▢';
-  }
+  const optionId = tool === 'rect' ? 'tool-shape-rect' : 'tool-' + tool;
+  const option = document.getElementById(optionId);
+  if (option) option.classList.add('active');
 }
 
 function setTool(tool) {
@@ -1218,7 +1260,7 @@ function setTool(tool) {
   if (tool === 'rect' || tool === 'circle' || tool === 'line') {
     const shapeMainBtn = document.getElementById('tool-rect');
     if (shapeMainBtn) shapeMainBtn.classList.add('active');
-    updateShapeMainIcon(tool);
+    updateShapeOptionActive(tool);
   }
 
   drawCanvas.style.pointerEvents = (tool === 'select') ? 'none' : 'auto';
@@ -1441,6 +1483,7 @@ drawCanvas.addEventListener('click', e => {
 });
 
 refreshColorPreview();
+updateShapeOptionActive('rect');
 
 /* ═══════════════════════════════════════════════════
    MISC
