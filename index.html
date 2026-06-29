@@ -347,88 +347,99 @@
   .pg-thumb-card:hover { border-width: 3px; z-index: 20 !important; filter: brightness(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
   .pg-thumb-card.active { border-width: 3px; box-shadow: 0 0 16px var(--cat-border); filter: brightness(1.1); }
 
-  /* 轉盤底部輔助控制：沒有滑鼠滾輪時也能快速翻頁 */
-  #dial-controls {
+  /* 轉盤輔助控制：沿著轉盤的圓弧滑輪 + 空白處頁碼輸入 */
+  #dial-arc-ui {
     position: absolute;
-    left: 68px;
-    bottom: 18px;
-    width: 220px;
-    min-height: 58px;
-    padding: 8px 10px;
-    border-radius: 16px;
-    background: rgba(18, 24, 38, 0.54);
-    border: 1px solid rgba(255,255,255,0.36);
-    box-shadow: 0 8px 26px rgba(0,0,0,0.20), inset 0 0 18px rgba(255,255,255,0.13);
-    backdrop-filter: blur(18px) saturate(145%);
-    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    inset: 0;
+    z-index: 35;
+    pointer-events: none;
+  }
+  #dial-arc-nav {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  #dial-arc-track,
+  #dial-arc-progress {
+    fill: none;
+    stroke-linecap: round;
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+  #dial-arc-track {
+    stroke: rgba(255,255,255,0.34);
+    stroke-width: 10;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.20));
+  }
+  #dial-arc-progress {
+    stroke: var(--theme-hex);
+    stroke-width: 8;
+    filter: drop-shadow(0 0 10px var(--theme-bg));
+  }
+  #dial-arc-thumb {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.94);
+    background: var(--theme-hex);
+    box-shadow: 0 0 14px var(--theme-bg), 0 3px 10px rgba(0,0,0,0.28);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    pointer-events: auto;
+    z-index: 38;
+  }
+  #dial-arc-thumb:active { cursor: grabbing; }
+  #dial-arc-label {
+    position: absolute;
+    left: 92px;
+    bottom: 112px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.72);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.38);
+    pointer-events: none;
+  }
+  #dial-page-jump {
+    position: absolute;
+    left: 72px;
+    bottom: 32px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    z-index: 40;
+    gap: 5px;
+    padding: 8px 12px;
+    min-width: 132px;
+    border-radius: 16px;
+    background: rgba(18, 24, 38, 0.44);
+    border: 1px solid rgba(255,255,255,0.28);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 0 14px rgba(255,255,255,0.10);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    pointer-events: auto;
+    z-index: 36;
   }
-  .dial-control-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  #dial-slider {
-    flex: 1;
-    width: 100%;
-    height: 18px;
-    accent-color: var(--theme-hex);
-    cursor: pointer;
-    background: transparent;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  #dial-slider::-webkit-slider-runnable-track {
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.30);
-  }
-  #dial-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    margin-top: -6px;
-    border-radius: 50%;
-    background: var(--theme-hex);
-    border: 2px solid rgba(255,255,255,0.90);
-    box-shadow: 0 0 12px var(--theme-bg), 0 3px 10px rgba(0,0,0,0.22);
-  }
-  #dial-slider::-moz-range-track {
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.30);
-  }
-  #dial-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--theme-hex);
-    border: 2px solid rgba(255,255,255,0.90);
-    box-shadow: 0 0 12px var(--theme-bg), 0 3px 10px rgba(0,0,0,0.22);
+  .dial-page-title {
+    font-size: 10px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.78);
+    letter-spacing: 0.7px;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.35);
   }
   .dial-jump-row {
     display: flex;
     align-items: center;
     gap: 6px;
   }
-  .dial-jump-label {
-    font-size: 10px;
-    font-weight: 900;
-    color: rgba(255,255,255,0.82);
-    letter-spacing: 0.6px;
-    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
-    white-space: nowrap;
-  }
   #dial-page-input {
-    width: 48px;
-    height: 26px;
-    border-radius: 9px;
-    border: 1px solid rgba(255,255,255,0.44);
-    background: rgba(255,255,255,0.16);
+    width: 52px;
+    height: 28px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.46);
+    background: rgba(255,255,255,0.15);
     color: #fff;
     font-size: 12px;
     font-weight: 800;
@@ -441,14 +452,14 @@
     box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 10px rgba(255,255,255,0.12);
   }
   #dial-total-label {
-    min-width: 34px;
+    min-width: 38px;
     font-size: 11px;
     font-weight: 800;
-    color: rgba(255,255,255,0.70);
+    color: rgba(255,255,255,0.72);
   }
   #dial-go-btn {
-    height: 26px;
-    padding: 0 9px;
+    height: 28px;
+    padding: 0 10px;
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,0.52);
     background: var(--theme-bg);
@@ -670,16 +681,20 @@
         <div class="dial-track"></div>
         <div id="dial-center-info"><div id="dial-center-text">Loading...</div></div>
         <div id="card-list"></div>
-        <div id="dial-controls">
-          <div class="dial-control-top">
-            <span class="dial-jump-label">SLIDE</span>
-            <input id="dial-slider" type="range" min="1" max="1" value="1" oninput="previewDialPage(this.value)" onchange="goToDialPage(this.value)"/>
-          </div>
-          <div class="dial-jump-row">
-            <span class="dial-jump-label">PAGE</span>
-            <input id="dial-page-input" type="number" min="1" value="1" onkeydown="handleDialPageKey(event)" onchange="goToDialPage(this.value)"/>
-            <span id="dial-total-label">/ —</span>
-            <button id="dial-go-btn" type="button" onclick="goToDialPage(document.getElementById('dial-page-input').value)">GO</button>
+        <div id="dial-arc-ui">
+          <svg id="dial-arc-nav" viewBox="0 0 330 330" aria-hidden="true">
+            <path id="dial-arc-track"></path>
+            <path id="dial-arc-progress"></path>
+          </svg>
+          <div id="dial-arc-label">SLIDE</div>
+          <button id="dial-arc-thumb" type="button" aria-label="Slide pages"></button>
+          <div id="dial-page-jump">
+            <span class="dial-page-title">PAGE</span>
+            <div class="dial-jump-row">
+              <input id="dial-page-input" type="number" min="1" value="1" onkeydown="handleDialPageKey(event)" onchange="goToDialPage(this.value)"/>
+              <span id="dial-total-label">/ —</span>
+              <button id="dial-go-btn" type="button" onclick="goToDialPage(document.getElementById('dial-page-input').value)">GO</button>
+            </div>
           </div>
         </div>
       </div>
@@ -823,24 +838,71 @@ function clampPageNumber(n) {
   return Math.max(1, Math.min(total, parseInt(n) || 1));
 }
 
-function updateDialControls(pageNum, total) {
-  const slider = document.getElementById('dial-slider');
-  const input = document.getElementById('dial-page-input');
-  const label = document.getElementById('dial-total-label');
-  if (!slider || !input || !label) return;
-  slider.max = Math.max(1, total || 1);
-  slider.value = Math.max(1, pageNum || 1);
-  input.max = Math.max(1, total || 1);
-  input.value = Math.max(1, pageNum || 1);
-  label.textContent = '/ ' + (total || '—');
+const DIAL_ARC = {
+  cx: 34,
+  cy: 298,
+  r: 166,
+  startDeg: 18,
+  endDeg: 66
+};
+let dialArcDragging = false;
+
+function getArcPoint(angleDeg) {
+  const rad = angleDeg * (Math.PI / 180);
+  return {
+    x: DIAL_ARC.cx + Math.cos(rad) * DIAL_ARC.r,
+    y: DIAL_ARC.cy - Math.sin(rad) * DIAL_ARC.r
+  };
 }
 
-// 滑桿拖曳時先預覽轉盤位置；放開滑桿後才真正跳頁，避免 PDF 連續重算造成卡頓。
+function buildArcPath(startDeg, endDeg, steps = 28) {
+  const safeEnd = Math.max(startDeg, endDeg);
+  let d = '';
+  for (let i = 0; i <= steps; i++) {
+    const t = steps === 0 ? 0 : i / steps;
+    const angle = startDeg + (safeEnd - startDeg) * t;
+    const pt = getArcPoint(angle);
+    d += (i === 0 ? 'M ' : ' L ') + pt.x.toFixed(2) + ' ' + pt.y.toFixed(2);
+  }
+  return d;
+}
+
+function pageToDialAngle(pageNum, total) {
+  if (!total || total <= 1) return DIAL_ARC.startDeg;
+  const ratio = (Math.max(1, pageNum) - 1) / (total - 1);
+  return DIAL_ARC.startDeg + ratio * (DIAL_ARC.endDeg - DIAL_ARC.startDeg);
+}
+
+function updateDialArcVisual(pageNum, total) {
+  const track = document.getElementById('dial-arc-track');
+  const progress = document.getElementById('dial-arc-progress');
+  const thumb = document.getElementById('dial-arc-thumb');
+  if (!track || !progress || !thumb) return;
+
+  track.setAttribute('d', buildArcPath(DIAL_ARC.startDeg, DIAL_ARC.endDeg));
+  const angle = pageToDialAngle(pageNum, total);
+  progress.setAttribute('d', buildArcPath(DIAL_ARC.startDeg, angle));
+
+  const pt = getArcPoint(angle);
+  thumb.style.left = pt.x + 'px';
+  thumb.style.top = pt.y + 'px';
+}
+
+function updateDialControls(pageNum, total) {
+  const input = document.getElementById('dial-page-input');
+  const label = document.getElementById('dial-total-label');
+  if (input) {
+    input.max = Math.max(1, total || 1);
+    input.value = Math.max(1, pageNum || 1);
+  }
+  if (label) label.textContent = '/ ' + (total || '—');
+  updateDialArcVisual(pageNum, total);
+}
+
 function previewDialPage(n) {
   if (!pdfDoc) return;
   n = clampPageNumber(n);
-  const input = document.getElementById('dial-page-input');
-  if (input) input.value = n;
+  updateDialControls(n, pdfDoc.numPages);
   syncDialToPage(n);
 }
 
@@ -856,6 +918,52 @@ function handleDialPageKey(e) {
     e.preventDefault();
     goToDialPage(e.target.value);
   }
+}
+
+function dialPointerEventToPage(e) {
+  const svg = document.getElementById('dial-arc-nav');
+  if (!svg) return 1;
+  const rect = svg.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (330 / rect.width);
+  const y = (e.clientY - rect.top) * (330 / rect.height);
+  let angle = Math.atan2(DIAL_ARC.cy - y, x - DIAL_ARC.cx) * 180 / Math.PI;
+  angle = Math.max(DIAL_ARC.startDeg, Math.min(DIAL_ARC.endDeg, angle));
+  const total = pdfDoc ? pdfDoc.numPages : 1;
+  if (total <= 1) return 1;
+  const ratio = (angle - DIAL_ARC.startDeg) / (DIAL_ARC.endDeg - DIAL_ARC.startDeg);
+  return clampPageNumber(Math.round(ratio * (total - 1)) + 1);
+}
+
+function onDialArcPointerMove(e) {
+  if (!dialArcDragging || !pdfDoc) return;
+  previewDialPage(dialPointerEventToPage(e));
+}
+
+async function onDialArcPointerUp(e) {
+  if (!dialArcDragging) return;
+  dialArcDragging = false;
+  window.removeEventListener('pointermove', onDialArcPointerMove);
+  window.removeEventListener('pointerup', onDialArcPointerUp);
+  await goToDialPage(dialPointerEventToPage(e));
+}
+
+function onDialArcPointerDown(e) {
+  if (!pdfDoc) return;
+  e.preventDefault();
+  dialArcDragging = true;
+  previewDialPage(dialPointerEventToPage(e));
+  window.addEventListener('pointermove', onDialArcPointerMove);
+  window.addEventListener('pointerup', onDialArcPointerUp);
+}
+
+function initDialArcUI() {
+  const track = document.getElementById('dial-arc-track');
+  const progress = document.getElementById('dial-arc-progress');
+  const thumb = document.getElementById('dial-arc-thumb');
+  [track, progress, thumb].forEach(el => {
+    if (el) el.addEventListener('pointerdown', onDialArcPointerDown);
+  });
+  updateDialArcVisual(1, 1);
 }
 
 function loadPDFFile(input) {
@@ -1215,6 +1323,8 @@ function toggleFullscreen() {
   if (!document.fullscreenElement) document.getElementById('app').requestFullscreen();
   else document.exitFullscreen();
 }
+
+initDialArcUI();
 
 (function() {
   const params = new URLSearchParams(window.location.search);
