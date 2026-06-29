@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>eTalking Kids — Viewer Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #0f0f18; }
+
+  /* ── App Shell ── */
+  #app {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* ══════════════════════════════════════
+     TOP BAR
+  ══════════════════════════════════════ */
+  #topbar {
+    flex-shrink: 0;
+    height: 48px;
+    background: #16213e;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    z-index: 100;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 700; color: #7eb8f7;
+    letter-spacing: 0.3px;
+  }
+  .brand-sub { font-weight: 400; font-size: 11px; color: #5a8fc4; }
+  #doc-title {
+    font-size: 12px; color: rgba(255,255,255,0.45);
+    flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 400px;
+  }
+  #topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  #timer-display {
+    background: rgba(0,0,0,0.3); border-radius: 20px;
+    padding: 3px 12px; font-size: 12px; color: #fff; font-weight: 500;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .tb-btn {
+    background: rgba(255,255,255,0.07);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    border-radius: 6px; color: rgba(255,255,255,0.7);
+    font-size: 12px; padding: 5px 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: background 0.15s;
+  }
+  .tb-btn:hover { background: rgba(255,255,255,0.14); }
+  .tb-icon-btn {
+    background: rgba(255,255,255,0.07);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    border-radius: 6px; color: rgba(255,255,255,0.7);
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 15px;
+    transition: background 0.15s;
+  }
+  .tb-icon-btn:hover { background: rgba(255,255,255,0.14); }
+
+  /* ══════════════════════════════════════
+     MAIN AREA
+  ══════════════════════════════════════ */
+  #main {
+    flex: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ══════════════════════════════════════
+     PDF CANVAS AREA
+  ══════════════════════════════════════ */
+  #pdf-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f0f18;
+    position: relative;
+    overflow: hidden;
+  }
+  #pdf-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.7);
+    border-radius: 2px;
+    display: block;
+  }
+  #loading-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: #0f0f18; gap: 16px;
+    z-index: 10;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid rgba(126,184,247,0.2);
+    border-top-color: #7eb8f7;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading-overlay p { color: rgba(255,255,255,0.4); font-size: 13px; }
+
+  /* drop zone */
+  #drop-hint {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px; color: rgba(255,255,255,0.25);
+    pointer-events: none;
+  }
+  #drop-hint i { font-size: 48px; }
+  #drop-hint p { font-size: 14px; }
+  #drop-hint small { font-size: 11px; opacity: 0.6; }
+  #pdf-area.drag-over { outline: 2px dashed #7eb8f7; outline-offset: -12px; }
+
+  /* ══════════════════════════════════════
+     LEFT TOOL HUB — 細條 hover 展開
+  ══════════════════════════════════════ */
+  #tool-hub {
+    position: absolute;
+    left: 0; top: 50%; transform: translateY(-50%);
+    z-index: 200;
+  }
+  #tool-edge {
+    width: 16px; height: 72px;
+    background: rgba(33,150,243,0.6);
+    border-radius: 0 10px 10px 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: rgba(255,255,255,0.8); font-size: 12px;
+    transition: opacity 0.2s, width 0.2s;
+  }
+  #tool-hub:hover #tool-edge { opacity: 0; width: 0; }
+
+  #tool-panel {
+    position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    display: flex; flex-direction: column;
+    align-items: flex-start; gap: 5px;
+    padding: 10px 8px;
+    background: rgba(22,33,62,0.96);
+    backdrop-filter: blur(10px);
+    border-radius: 0 14px 14px 0;
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-left: none;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  #tool-hub:hover #tool-panel {
+    opacity: 1; pointer-events: all;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  .tool-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 15px; color: rgba(255,255,255,0.7);
+    position: relative;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .tool-btn:hover { background: rgba(126,184,247,0.2); transform: scale(1.12); color: #7eb8f7; }
+  .tool-btn.active { background: rgba(33,150,243,0.3); color: #7eb8f7; border-color: rgba(126,184,247,0.4); }
+  .tool-tooltip {
+    position: absolute; left: 46px; top: 50%; transform: translateY(-50%);
+    background: rgba(22,33,62,0.95); color: rgba(255,255,255,0.9);
+    font-size: 10px; padding: 3px 8px; border-radius: 4px;
+    white-space: nowrap; pointer-events: none; opacity: 0;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    transition: opacity 0.15s;
+  }
+  .tool-btn:hover .tool-tooltip { opacity: 1; }
+  .tool-divider { width: 24px; height: 1px; background: rgba(255,255,255,0.1); margin: 2px 6px; }
+
+  /* ══════════════════════════════════════
+     BOTTOM BAR
+  ══════════════════════════════════════ */
+  #bottombar {
+    flex-shrink: 0; height: 46px;
+    background: #16213e;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 10px;
+    z-index: 100;
+  }
+  .nav-btn {
+    width: 32px; height: 32px; border-radius: 7px;
+    background: rgba(255,255,255,0.07);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7); font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.15); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  #page-indicator {
+    font-size: 12px; color: rgba(255,255,255,0.5);
+    min-width: 70px; text-align: center;
+  }
+  #page-input {
+    width: 40px; height: 28px;
+    background: rgba(255,255,255,0.07);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 5px; color: #fff;
+    font-size: 12px; text-align: center;
+  }
+  #page-input:focus { outline: none; border-color: #7eb8f7; }
+  .zoom-group { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  #zoom-label { font-size: 11px; color: rgba(255,255,255,0.4); min-width: 38px; text-align: center; }
+
+  /* PDF 上傳按鈕 */
+  #upload-btn {
+    background: rgba(126,184,247,0.15);
+    border: 0.5px solid rgba(126,184,247,0.3);
+    border-radius: 6px; color: #7eb8f7;
+    font-size: 11px; padding: 5px 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: background 0.15s;
+    margin-left: 12px;
+  }
+  #upload-btn:hover { background: rgba(126,184,247,0.25); }
+  #file-input { display: none; }
+
+  /* ══════════════════════════════════════
+     LEFT-BOTTOM CATALOG DIAL
+  ══════════════════════════════════════ */
+  #catalog-zone {
+    position: absolute;
+    left: 12px; bottom: 58px;
+    z-index: 300;
+  }
+
+  #cat-trigger {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(30,30,50,0.85);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
+    font-size: 18px; color: rgba(255,255,255,0.85);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+    transition: background 0.2s, transform 0.2s;
+    position: relative; z-index: 2;
+  }
+  #cat-trigger:hover { background: rgba(50,50,80,0.9); transform: scale(1.05); }
+  #cat-trigger .cat-label {
+    font-size: 8px; color: rgba(255,255,255,0.5); line-height: 1;
+  }
+
+  /* 面板 */
+  #cat-panel {
+    position: absolute;
+    bottom: 54px; left: 0;
+    width: 240px;
+    background: rgba(14,18,36,0.97);
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    padding: 12px 10px 10px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+    display: none;
+  }
+  #cat-panel.open { display: block; }
+
+  .cat-panel-header {
+    font-size: 9px; font-weight: 600;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px; text-transform: uppercase;
+    text-align: center; margin-bottom: 10px;
+  }
+
+  /* 卡片堆疊軌道 */
+  #card-track {
+    position: relative; height: 220px; overflow: hidden;
+    cursor: ns-resize; user-select: none;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+  }
+  #card-list {
+    position: absolute; width: 100%;
+    transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* 單張卡片 */
+  .pg-card {
+    height: 44px;
+    display: flex; align-items: center; gap: 9px;
+    padding: 0 10px;
+    border-radius: 9px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.2s;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .pg-card:not(.center-card) { filter: brightness(0.65) saturate(0.7); }
+  .pg-card:hover { filter: brightness(0.85) saturate(0.9); }
+  .pg-card.center-card {
+    filter: none;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    border-color: rgba(255,255,255,0.25);
+  }
+  .pg-card.center-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; border-radius: 9px 0 0 9px;
+    background: currentColor;
+  }
+  .card-pnum { font-size: 10px; font-weight: 700; opacity: 0.5; min-width: 20px; color: #fff; }
+  .card-name { font-size: 11px; color: rgba(255,255,255,0.8); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .center-card .card-name { color: #fff; font-weight: 500; }
+  .card-badge {
+    font-size: 8px; padding: 2px 6px; border-radius: 8px;
+    font-weight: 600; white-space: nowrap;
+  }
+
+  /* 等級色 */
+  .lv-green  { background: rgba(27,94,32,0.75); color: #4caf50; }
+  .lv-green  .card-badge { background: rgba(76,175,80,0.25); color: #a5d6a7; }
+  .lv-yellow { background: rgba(180,90,0,0.75); color: #ffa726; }
+  .lv-yellow .card-badge { background: rgba(255,167,38,0.2);  color: #ffe082; }
+  .lv-red    { background: rgba(150,20,20,0.75); color: #ef5350; }
+  .lv-red    .card-badge { background: rgba(239,83,80,0.2);   color: #ef9a9a; }
+  .lv-purple { background: rgba(74,20,140,0.75); color: #ab47bc; }
+  .lv-purple .card-badge { background: rgba(171,71,188,0.2);  color: #ce93d8; }
+
+  /* 控制列 */
+  .cat-controls {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 8px;
+  }
+  .cat-ctrl-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6); font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .cat-ctrl-btn:hover { background: rgba(255,255,255,0.16); }
+  .cat-cur-name {
+    font-size: 10px; color: rgba(255,255,255,0.45);
+    flex: 1; text-align: center; overflow: hidden;
+    white-space: nowrap; text-overflow: ellipsis;
+  }
+
+  /* 圖例 */
+  .cat-legend {
+    display: flex; gap: 8px; justify-content: center;
+    margin-top: 8px; padding-top: 8px;
+    border-top: 0.5px solid rgba(255,255,255,0.07);
+    flex-wrap: wrap;
+  }
+  .leg-item {
+    display: flex; align-items: center; gap: 3px;
+    font-size: 9px; color: rgba(255,255,255,0.4);
+  }
+  .leg-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* ══════════════════════════════════════
+     SOUND FX / INTERACT / SUMMARY BUTTONS
+     (原本 sidebar 功能移到右下角浮動)
+  ══════════════════════════════════════ */
+  #feature-fab {
+    position: absolute;
+    right: 14px; bottom: 58px;
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 8px;
+    z-index: 200;
+  }
+  .fab-btn {
+    background: rgba(22,33,62,0.92);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 22px;
+    color: rgba(255,255,255,0.8);
+    font-size: 12px; padding: 7px 14px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+    transition: background 0.15s, transform 0.15s;
+    white-space: nowrap;
+  }
+  .fab-btn:hover { background: rgba(40,55,100,0.95); transform: translateX(-3px); }
+  .fab-btn i { font-size: 14px; }
+  .fab-btn.active { background: rgba(33,150,243,0.3); border-color: rgba(126,184,247,0.4); color: #7eb8f7; }
+
+  /* ══════════════════════════════════════
+     DRAW OVERLAY (畫筆功能)
+  ══════════════════════════════════════ */
+  #draw-overlay {
+    position: absolute; inset: 0;
+    cursor: crosshair;
+    display: none; z-index: 50;
+  }
+  #draw-overlay canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* ══════════════════════════════════════
+     FULLSCREEN
+  ══════════════════════════════════════ */
+  :fullscreen #topbar,
+  :fullscreen #bottombar { display: none; }
+  :fullscreen #app { background: #000; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Top Bar ── -->
+  <div id="topbar">
+    <div class="brand">
+      <i class="ti ti-book-2" style="font-size:18px;"></i>
+      eTalking <span class="brand-sub">KIDS</span>
+    </div>
+    <span id="doc-title">— 請載入教材 PDF —</span>
+    <div id="topbar-right">
+      <div id="timer-display">
+        <i class="ti ti-clock" style="font-size:13px;"></i>
+        <span id="timer-val">00:00</span>
+      </div>
+      <button class="tb-btn" onclick="toggleMode()">
+        <i class="ti ti-user" id="mode-icon"></i>
+        <span id="mode-label">老師模式</span>
+      </button>
+      <button class="tb-icon-btn" onclick="toggleFullscreen()" title="全螢幕">
+        <i class="ti ti-arrows-maximize"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <div id="main">
+
+    <!-- PDF 畫布區 -->
+    <div id="pdf-area" id="drop-zone">
+      <div id="loading-overlay" style="display:none;">
+        <div class="spinner"></div>
+        <p>載入中...</p>
+      </div>
+      <div id="drop-hint">
+        <i class="ti ti-file-type-pdf" style="color:rgba(126,184,247,0.4);"></i>
+        <p>拖曳 PDF 到這裡，或點下方按鈕上傳</p>
+        <small>支援直接輸入 PDF 網址</small>
+      </div>
+      <canvas id="pdf-canvas" style="display:none;"></canvas>
+      <div id="draw-overlay"><canvas id="draw-canvas"></canvas></div>
+    </div>
+
+    <!-- 左側工具列 Hub -->
+    <div id="tool-hub">
+      <div id="tool-edge"><i class="ti ti-chevron-right"></i></div>
+      <div id="tool-panel">
+        <button class="tool-btn active" id="tool-select" onclick="setTool('select')" title="選取">
+          <i class="ti ti-cursor-text"></i>
+          <span class="tool-tooltip">選取</span>
+        </button>
+        <button class="tool-btn" id="tool-pen" onclick="setTool('pen')" title="畫筆">
+          <i class="ti ti-pencil"></i>
+          <span class="tool-tooltip">畫筆</span>
+        </button>
+        <button class="tool-btn" id="tool-highlight" onclick="setTool('highlight')" title="螢光筆">
+          <i class="ti ti-highlight"></i>
+          <span class="tool-tooltip">螢光筆</span>
+        </button>
+        <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')" title="橡皮擦">
+          <i class="ti ti-eraser"></i>
+          <span class="tool-tooltip">橡皮擦</span>
+        </button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" onclick="clearDrawing()" title="清除">
+          <i class="ti ti-trash"></i>
+          <span class="tool-tooltip">清除畫筆</span>
+        </button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" id="tool-text" onclick="setTool('text')" title="文字">
+          <i class="ti ti-writing"></i>
+          <span class="tool-tooltip">文字</span>
+        </button>
+        <button class="tool-btn" onclick="toggleFullscreen()" title="全螢幕">
+          <i class="ti ti-arrows-maximize"></i>
+          <span class="tool-tooltip">全螢幕</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 左下 卡片目錄轉盤 -->
+    <div id="catalog-zone">
+      <div id="cat-trigger" onclick="toggleCatalog()">
+        <i class="ti ti-layout-list" style="font-size:18px;"></i>
+        <span class="cat-label">目錄</span>
+      </div>
+      <div id="cat-panel">
+        <div class="cat-panel-header"><i class="ti ti-list"></i> 課程目錄</div>
+        <div id="card-track" onwheel="onCatWheel(event)">
+          <div id="card-list"></div>
+        </div>
+        <div class="cat-controls">
+          <button class="cat-ctrl-btn" onclick="catShift(-1)"><i class="ti ti-chevron-up"></i></button>
+          <span class="cat-cur-name" id="cat-cur-name">—</span>
+          <button class="cat-ctrl-btn" onclick="catShift(1)"><i class="ti ti-chevron-down"></i></button>
+        </div>
+        <div class="cat-legend">
+          <span class="leg-item"><div class="leg-dot" style="background:#4caf50;"></div>初級 1–5</span>
+          <span class="leg-item"><div class="leg-dot" style="background:#ffa726;"></div>中級 6–10</span>
+          <span class="leg-item"><div class="leg-dot" style="background:#ef5350;"></div>高級 11–15</span>
+          <span class="leg-item"><div class="leg-dot" style="background:#ab47bc;"></div>挑戰 16+</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右下 功能浮動按鈕 (Sound / Interact / Summary) -->
+    <div id="feature-fab">
+      <button class="fab-btn" id="fab-sound" onclick="toggleFab('sound')">
+        <i class="ti ti-volume"></i> Sound Effects
+      </button>
+      <button class="fab-btn" id="fab-interact" onclick="toggleFab('interact')">
+        <i class="ti ti-device-gamepad-2"></i> Interact
+      </button>
+      <button class="fab-btn" id="fab-summary" onclick="toggleFab('summary')">
+        <i class="ti ti-chart-bar"></i> Summary
+      </button>
+    </div>
+
+  </div><!-- end #main -->
+
+  <!-- ── Bottom Bar ── -->
+  <div id="bottombar">
+    <button class="nav-btn" id="btn-prev" onclick="changePage(-1)" disabled>
+      <i class="ti ti-chevron-left"></i>
+    </button>
+    <input id="page-input" type="number" min="1" value="1" onchange="goToPage(this.value)"/>
+    <span id="page-indicator">/ —</span>
+    <button class="nav-btn" id="btn-next" onclick="changePage(1)" disabled>
+      <i class="ti ti-chevron-right"></i>
+    </button>
+
+    <div class="zoom-group">
+      <button class="nav-btn" onclick="changeZoom(-0.1)"><i class="ti ti-minus"></i></button>
+      <span id="zoom-label">100%</span>
+      <button class="nav-btn" onclick="changeZoom(0.1)"><i class="ti ti-plus"></i></button>
+      <button class="nav-btn" onclick="setZoom(1)" title="重設縮放" style="font-size:11px;width:auto;padding:0 8px;">重設</button>
+    </div>
+
+    <label id="upload-btn">
+      <i class="ti ti-upload"></i> 載入 PDF
+      <input id="file-input" type="file" accept=".pdf" onchange="loadPDFFile(this)"/>
+    </label>
+
+    <button class="tb-btn" onclick="promptURL()" style="margin-left:4px;">
+      <i class="ti ti-link"></i> 網址
+    </button>
+  </div>
+
+</div><!-- end #app -->
+
+<script>
+/* ═══════════════════════════════════════════════════
+   PDF.js setup
+═══════════════════════════════════════════════════ */
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let pdfDoc = null, currentPage = 1, zoomScale = 1.3, renderTask = null;
+const canvas = document.getElementById('pdf-canvas');
+const ctx = canvas.getContext('2d');
+
+function showLoading(show) {
+  document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+}
+
+async function loadPDF(src) {
+  showLoading(true);
+  document.getElementById('drop-hint').style.display = 'none';
+  try {
+    pdfDoc = await pdfjsLib.getDocument(src).promise;
+    currentPage = 1;
+    buildCatalog(pdfDoc.numPages);
+    await renderPage(currentPage);
+    updateNav();
+    document.getElementById('doc-title').textContent =
+      (typeof src === 'string' ? src.split('/').pop().replace('.pdf','') : src.name) || 'PDF 教材';
+    canvas.style.display = 'block';
+  } catch(e) {
+    alert('PDF 載入失敗：' + e.message);
+    document.getElementById('drop-hint').style.display = 'flex';
+  }
+  showLoading(false);
+}
+
+async function renderPage(num) {
+  if (!pdfDoc) return;
+  if (renderTask) { renderTask.cancel(); }
+  const page = await pdfDoc.getPage(num);
+  const vp = page.getViewport({ scale: zoomScale });
+  canvas.width = vp.width;
+  canvas.height = vp.height;
+  renderTask = page.render({ canvasContext: ctx, viewport: vp });
+  try { await renderTask.promise; } catch(e) { /* cancelled */ }
+  // sync draw canvas
+  const dc = document.getElementById('draw-canvas');
+  dc.width = canvas.width; dc.height = canvas.height;
+}
+
+function updateNav() {
+  const total = pdfDoc ? pdfDoc.numPages : 0;
+  document.getElementById('page-indicator').textContent = '/ ' + total;
+  document.getElementById('page-input').value = currentPage;
+  document.getElementById('page-input').max = total;
+  document.getElementById('btn-prev').disabled = currentPage <= 1;
+  document.getElementById('btn-next').disabled = currentPage >= total;
+  document.getElementById('cpn-label') && (document.getElementById('cpn-label').textContent = currentPage);
+  // sync catalog
+  catSelectByPage(currentPage);
+}
+
+async function changePage(dir) {
+  if (!pdfDoc) return;
+  const np = currentPage + dir;
+  if (np < 1 || np > pdfDoc.numPages) return;
+  currentPage = np;
+  await renderPage(currentPage);
+  updateNav();
+}
+
+async function goToPage(n) {
+  if (!pdfDoc) return;
+  n = Math.max(1, Math.min(pdfDoc.numPages, parseInt(n) || 1));
+  currentPage = n;
+  await renderPage(currentPage);
+  updateNav();
+}
+
+function changeZoom(delta) {
+  setZoom(zoomScale + delta);
+}
+async function setZoom(z) {
+  zoomScale = Math.max(0.5, Math.min(3, z));
+  document.getElementById('zoom-label').textContent = Math.round(zoomScale * 100) + '%';
+  if (pdfDoc) await renderPage(currentPage);
+}
+
+function loadPDFFile(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => loadPDF(new Uint8Array(e.target.result));
+  reader.readAsArrayBuffer(input.files[0]);
+}
+
+function promptURL() {
+  const url = prompt('請輸入 PDF 網址：');
+  if (url) loadPDF(url);
+}
+
+/* ── Drag & Drop ── */
+const pdfArea = document.getElementById('pdf-area');
+pdfArea.addEventListener('dragover', e => { e.preventDefault(); pdfArea.classList.add('drag-over'); });
+pdfArea.addEventListener('dragleave', () => pdfArea.classList.remove('drag-over'));
+pdfArea.addEventListener('drop', e => {
+  e.preventDefault(); pdfArea.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') {
+    const reader = new FileReader();
+    reader.onload = ev => loadPDF(new Uint8Array(ev.target.result));
+    reader.readAsArrayBuffer(file);
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   DRAWING TOOLS
+═══════════════════════════════════════════════════ */
+let currentTool = 'select';
+let drawing = false, lastX = 0, lastY = 0;
+const drawOverlay = document.getElementById('draw-overlay');
+const drawCanvas = document.getElementById('draw-canvas');
+const dctx = drawCanvas.getContext('2d');
+
+function setTool(tool) {
+  currentTool = tool;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tool-' + tool);
+  if (el) el.classList.add('active');
+  drawOverlay.style.display = (tool === 'select' || tool === 'text') ? 'none' : 'block';
+  if (tool === 'eraser') drawCanvas.style.cursor = 'cell';
+  else if (tool !== 'select') drawCanvas.style.cursor = 'crosshair';
+}
+
+drawCanvas.addEventListener('mousedown', e => {
+  drawing = true;
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+drawCanvas.addEventListener('mousemove', e => {
+  if (!drawing) return;
+  dctx.beginPath();
+  dctx.moveTo(lastX, lastY);
+  dctx.lineTo(e.offsetX, e.offsetY);
+  if (currentTool === 'eraser') {
+    dctx.strokeStyle = 'rgba(0,0,0,1)';
+    dctx.globalCompositeOperation = 'destination-out';
+    dctx.lineWidth = 24;
+  } else if (currentTool === 'highlight') {
+    dctx.strokeStyle = 'rgba(255,235,59,0.45)';
+    dctx.globalCompositeOperation = 'source-over';
+    dctx.lineWidth = 18;
+  } else {
+    dctx.strokeStyle = '#e53935';
+    dctx.globalCompositeOperation = 'source-over';
+    dctx.lineWidth = 2.5;
+  }
+  dctx.lineCap = 'round';
+  dctx.stroke();
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+drawCanvas.addEventListener('mouseup', () => { drawing = false; });
+drawCanvas.addEventListener('mouseleave', () => { drawing = false; });
+
+function clearDrawing() {
+  dctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+}
+
+/* ═══════════════════════════════════════════════════
+   CATALOG DIAL
+═══════════════════════════════════════════════════ */
+const ITEM_H = 48;
+let catIdx = 0;
+let catOpen = false;
+let catalogPages = [];
+
+function getLv(i, total) {
+  const ratio = i / total;
+  if (ratio < 0.28) return { lv:'green',  tag:'初級' };
+  if (ratio < 0.56) return { lv:'yellow', tag:'中級' };
+  if (ratio < 0.84) return { lv:'red',    tag:'高級' };
+  return { lv:'purple', tag:'挑戰' };
+}
+
+function buildCatalog(total) {
+  catalogPages = [];
+  for (let i = 0; i < total; i++) {
+    const { lv, tag } = getLv(i, total);
+    catalogPages.push({ num: i + 1, name: 'Page ' + (i + 1), lv, tag });
+  }
+  catIdx = 0;
+  renderCatalog();
+}
+
+function renderCatalog() {
+  const list = document.getElementById('card-list');
+  list.innerHTML = '';
+  catalogPages.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = `pg-card lv-${p.lv}${i === catIdx ? ' center-card' : ''}`;
+    div.innerHTML = `
+      <span class="card-pnum">P${p.num}</span>
+      <span class="card-name">${p.name}</span>
+      <span class="card-badge">${p.tag}</span>
+    `;
+    div.onclick = () => catSelect(i);
+    list.appendChild(div);
+  });
+  updateCatPosition();
+}
+
+function updateCatPosition() {
+  const list = document.getElementById('card-list');
+  const offset = -(catIdx - 2) * ITEM_H;
+  list.style.transform = `translateY(${offset}px)`;
+  const name = catalogPages[catIdx] ? `P${catalogPages[catIdx].num} · ${catalogPages[catIdx].name}` : '—';
+  document.getElementById('cat-cur-name').textContent = name;
+  document.querySelectorAll('.pg-card').forEach((el, i) => {
+    el.classList.toggle('center-card', i === catIdx);
+  });
+}
+
+function catSelect(i) {
+  catIdx = Math.max(0, Math.min(catalogPages.length - 1, i));
+  updateCatPosition();
+  goToPage(catalogPages[catIdx].num);
+}
+
+function catSelectByPage(pageNum) {
+  const i = catalogPages.findIndex(p => p.num === pageNum);
+  if (i >= 0) { catIdx = i; updateCatPosition(); }
+}
+
+function catShift(dir) { catSelect(catIdx + dir); }
+function onCatWheel(e) { e.preventDefault(); catShift(e.deltaY > 0 ? 1 : -1); }
+
+/* drag on card-track */
+let catDragY = null;
+document.getElementById('card-track').addEventListener('mousedown', e => { catDragY = e.clientY; });
+window.addEventListener('mousemove', e => {
+  if (catDragY === null) return;
+  if (Math.abs(e.clientY - catDragY) > 20) {
+    catShift(e.clientY > catDragY ? -1 : 1);
+    catDragY = e.clientY;
+  }
+});
+window.addEventListener('mouseup', () => { catDragY = null; });
+
+function toggleCatalog() {
+  catOpen = !catOpen;
+  document.getElementById('cat-panel').classList.toggle('open', catOpen);
+}
+document.addEventListener('click', e => {
+  const zone = document.getElementById('catalog-zone');
+  if (!zone.contains(e.target)) {
+    catOpen = false;
+    document.getElementById('cat-panel').classList.remove('open');
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   MODE TOGGLE (老師/學生)
+═══════════════════════════════════════════════════ */
+let isTeacher = true;
+function toggleMode() {
+  isTeacher = !isTeacher;
+  document.getElementById('mode-label').textContent = isTeacher ? '老師模式' : '學生模式';
+  document.getElementById('mode-icon').className = isTeacher ? 'ti ti-user' : 'ti ti-user-circle';
+  document.getElementById('tool-hub').style.display = isTeacher ? 'block' : 'none';
+  document.getElementById('feature-fab').style.display = isTeacher ? 'flex' : 'none';
+}
+
+/* ═══════════════════════════════════════════════════
+   FEATURE FAB (Sound / Interact / Summary)
+═══════════════════════════════════════════════════ */
+const fabState = { sound: false, interact: false, summary: false };
+function toggleFab(name) {
+  fabState[name] = !fabState[name];
+  document.getElementById('fab-' + name).classList.toggle('active', fabState[name]);
+  if (name === 'sound' && fabState.sound) {
+    alert('🔊 Sound Effects 功能開啟\n（實際音效需連接音源檔）');
+    fabState.sound = false;
+    document.getElementById('fab-sound').classList.remove('active');
+  }
+  if (name === 'interact' && fabState.interact) {
+    alert('🎮 Interact 功能開啟\n（互動模組待整合）');
+    fabState.interact = false;
+    document.getElementById('fab-interact').classList.remove('active');
+  }
+  if (name === 'summary' && fabState.summary) {
+    const total = pdfDoc ? pdfDoc.numPages : 0;
+    alert(`📊 課程摘要\n總頁數：${total}\n目前進度：第 ${currentPage} 頁\n完成度：${total ? Math.round(currentPage/total*100) : 0}%`);
+    fabState.summary = false;
+    document.getElementById('fab-summary').classList.remove('active');
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   FULLSCREEN
+═══════════════════════════════════════════════════ */
+function toggleFullscreen() {
+  if (!document.fullscreenElement) document.getElementById('app').requestFullscreen();
+  else document.exitFullscreen();
+}
+
+/* ═══════════════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════════════ */
+let timerSec = 0;
+setInterval(() => {
+  timerSec++;
+  const m = String(Math.floor(timerSec / 60)).padStart(2, '0');
+  const s = String(timerSec % 60).padStart(2, '0');
+  document.getElementById('timer-val').textContent = m + ':' + s;
+}, 1000);
+
+/* ═══════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changePage(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changePage(-1);
+  if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+  if (e.key === 'p') setTool('pen');
+  if (e.key === 'e') setTool('eraser');
+  if (e.key === 'Escape') setTool('select');
+});
+
+/* ═══════════════════════════════════════════════════
+   AUTO LOAD — URL param 優先，否則載入預設教材
+═══════════════════════════════════════════════════ */
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const pdfUrl = params.get('url');
+  const pdfName = params.get('name');
+  if (pdfUrl) {
+    if (pdfName) document.getElementById('doc-title').textContent = decodeURIComponent(pdfName);
+    loadPDF(decodeURIComponent(pdfUrl));
+  } else {
+    // 沒有網址參數 → 600ms 後自動跳出選檔視窗
+    document.getElementById('doc-title').textContent = '請選擇教材 PDF';
+    setTimeout(() => document.getElementById('file-input').click(), 600);
+  }
+})();
+
+/* init */
+buildCatalog(0);
+</script>
+</body>
+</html>
