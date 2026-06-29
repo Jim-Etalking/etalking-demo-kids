@@ -57,20 +57,122 @@
   #drop-hint i { font-size: 48px; } #drop-hint p { font-size: 14px; } #drop-hint small { font-size: 11px; opacity: 0.6; }
 
   /* ══════════════════════════════════════
-     LEFT TOOL HUB (左側彈出工具列)
+     LEFT TOOL HUB (左側彈出工具列｜毛玻璃主題連動版)
   ══════════════════════════════════════ */
-  #tool-hub { position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 200; }
-  #tool-edge { width: 16px; height: 72px; background: rgba(33,150,243,0.6); border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.8); transition: opacity 0.2s, width 0.2s; }
+  #tool-hub {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 200;
+  }
+
+  /* 左側觸發邊緣：改成跟右側一樣會跟轉盤顏色連動的毛玻璃 */
+  #tool-edge {
+    width: 16px;
+    height: 72px;
+    background: var(--theme-bg);
+    border: 1.5px solid rgba(255,255,255,0.6);
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--theme-hex);
+    box-shadow: 4px 4px 18px rgba(0,0,0,0.12), inset 0 0 12px rgba(255,255,255,0.45);
+    backdrop-filter: blur(16px) saturate(130%);
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    transition: opacity 0.2s, width 0.2s, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
   #tool-hub:hover #tool-edge { opacity: 0; width: 0; }
   
-  #tool-panel { position: absolute; left: 0; top: 50%; transform: translateY(-50%) translateX(-4px); display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 10px 8px; background: rgba(22,33,62,0.96); backdrop-filter: blur(10px); border-radius: 0 14px 14px 0; border: 0.5px solid rgba(255,255,255,0.12); border-left: none; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
-  #tool-hub:hover #tool-panel { opacity: 1; pointer-events: all; transform: translateY(-50%) translateX(0); }
+  /* 左側彈出面板：白色半透明毛玻璃，與右側 feature-panel 視覺統一 */
+  #tool-panel {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 12px 10px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-left: none;
+    border-radius: 0 14px 14px 0;
+    box-shadow: 8px 8px 40px rgba(0,0,0,0.15), inset 0 0 24px rgba(255,255,255,0.6);
+    backdrop-filter: blur(24px) saturate(130%);
+    -webkit-backdrop-filter: blur(24px) saturate(130%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s, background 0.3s ease;
+  }
+  #tool-hub:hover #tool-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) translateX(0);
+  }
   
-  .tool-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; color: rgba(255,255,255,0.7); position: relative; transition: all 0.15s; }
-  .tool-btn:hover { background: rgba(126,184,247,0.2); transform: scale(1.12); color: #7eb8f7; }
-  .tool-btn.active { background: rgba(33,150,243,0.3); color: #7eb8f7; border-color: rgba(126,184,247,0.4); }
-  .tool-divider { width: 24px; height: 1px; background: rgba(255,255,255,0.1); margin: 2px 6px; }
-  .tool-tooltip { position: absolute; left: 46px; top: 50%; transform: translateY(-50%); background: rgba(22,33,62,0.95); color: rgba(255,255,255,0.9); font-size: 10px; padding: 4px 8px; border-radius: 4px; white-space: nowrap; pointer-events: none; opacity: 0; border: 0.5px solid rgba(255,255,255,0.1); transition: opacity 0.15s; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  /* 左側工具按鈕：顏色跟隨轉盤主題 */
+  .tool-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--theme-bg);
+    border: 1.5px solid rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--theme-hex);
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1), inset 0 0 10px rgba(255,255,255,0.35);
+    transition: transform 0.2s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .tool-btn:hover {
+    background: rgba(255,255,255,0.9);
+    transform: scale(1.12);
+    color: var(--theme-hex);
+    border-color: var(--theme-hex);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  }
+  .tool-btn.active {
+    background: var(--theme-hex);
+    color: #fff;
+    border-color: var(--theme-hex);
+    box-shadow: 0 0 16px var(--theme-hex);
+  }
+  .tool-divider {
+    width: 24px;
+    height: 1px;
+    background: rgba(255,255,255,0.65);
+    margin: 2px 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .tool-tooltip {
+    position: absolute;
+    left: 46px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.75);
+    color: var(--theme-hex);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    border: 1px solid rgba(255,255,255,0.8);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    transition: opacity 0.15s, color 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.16);
+  }
   .tool-btn:hover .tool-tooltip { opacity: 1; }
 
   /* ══════════════════════════════════════
@@ -418,7 +520,7 @@ function updateCenterText(levelId) {
     textEl.textContent = info.name;
     textEl.style.color = info.hex;
     
-    // 更新全域變數，右側的 feature-hub 就會跟著變色！
+    // 更新全域變數，左側 tool-hub 與右側 feature-hub 都會跟著變色！
     document.documentElement.style.setProperty('--theme-hex', info.hex);
     document.documentElement.style.setProperty('--theme-bg', info.bg);
   }
