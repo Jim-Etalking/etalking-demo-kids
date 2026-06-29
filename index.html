@@ -251,6 +251,58 @@
     font-size: 21px;
     transform: translateX(1px);
   }
+  .tool-shape-icon.circle {
+    font-size: 20px;
+    transform: translateY(-1px);
+  }
+  .tool-shape-icon.line {
+    font-size: 22px;
+    transform: rotate(-18deg);
+  }
+
+  .shape-tool-group {
+    position: relative;
+    width: 36px;
+    height: 36px;
+  }
+  .shape-tool-group > .tool-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .shape-flyout {
+    position: absolute;
+    left: 46px;
+    top: 50%;
+    transform: translateY(-50%) translateX(-8px);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px;
+    border-radius: 999px;
+    background: rgba(18, 24, 38, 0.72);
+    border: 1px solid rgba(255,255,255,0.38);
+    box-shadow: 0 8px 26px rgba(0,0,0,0.28), inset 0 0 14px rgba(255,255,255,0.12);
+    backdrop-filter: blur(18px) saturate(145%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 120;
+  }
+  .shape-tool-group:hover .shape-flyout {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) translateX(0);
+  }
+  .shape-tool-group:hover > .tool-btn .tool-tooltip {
+    opacity: 0;
+  }
+  .shape-option {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+    flex: 0 0 auto;
+  }
   .tool-divider {
     width: 24px;
     height: 1px;
@@ -625,9 +677,19 @@
         <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">
           <i class="ti ti-eraser"></i><span class="tool-tooltip">Eraser</span>
         </button>
-        <button class="tool-btn" id="tool-rect" onclick="setTool('rect')">
-          <span class="tool-shape-icon square">▢</span><span class="tool-tooltip">Rectangle</span>
-        </button>
+        <div class="shape-tool-group">
+          <button class="tool-btn" id="tool-rect" onclick="setTool('rect')">
+            <span class="tool-shape-icon square">▢</span><span class="tool-tooltip">Shape</span>
+          </button>
+          <div class="shape-flyout">
+            <button class="tool-btn shape-option" id="tool-circle" onclick="setTool('circle')" title="Circle">
+              <span class="tool-shape-icon circle">○</span><span class="tool-tooltip">Circle</span>
+            </button>
+            <button class="tool-btn shape-option" id="tool-line" onclick="setTool('line')" title="Line">
+              <span class="tool-shape-icon line">╱</span><span class="tool-tooltip">Line</span>
+            </button>
+          </div>
+        </div>
         <button class="tool-btn" id="tool-arrow" onclick="setTool('arrow')">
           <span class="tool-shape-icon arrow">➜</span><span class="tool-tooltip">Arrow</span>
         </button>
@@ -1093,6 +1155,8 @@ const toolColors = {
   text: '#e53935',      // 文字：紅色
   highlight: '#ffeb3b', // 螢光筆：黃色
   rect: '#2196f3',      // 框框：藍色
+  circle: '#2196f3',    // 圓形：藍色
+  line: '#2196f3',      // 直線：藍色
   arrow: '#ff9800'      // 大箭頭：橘色
 };
 
@@ -1127,6 +1191,10 @@ function setTool(tool) {
   document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
   const el = document.getElementById('tool-' + tool);
   if (el) el.classList.add('active');
+  if (tool === 'rect' || tool === 'circle' || tool === 'line') {
+    const shapeMainBtn = document.getElementById('tool-rect');
+    if (shapeMainBtn) shapeMainBtn.classList.add('active');
+  }
 
   drawCanvas.style.pointerEvents = (tool === 'select') ? 'none' : 'auto';
 
@@ -1164,7 +1232,7 @@ function getExactPos(e) {
 }
 
 function isShapeTool(tool) {
-  return tool === 'rect' || tool === 'arrow';
+  return tool === 'rect' || tool === 'circle' || tool === 'line' || tool === 'arrow';
 }
 
 function drawRectangle(x1, y1, x2, y2) {
@@ -1177,6 +1245,37 @@ function drawRectangle(x1, y1, x2, y2) {
   dctx.lineWidth = 4;
   dctx.lineJoin = 'round';
   dctx.strokeRect(left, top, width, height);
+}
+
+function drawCircle(x1, y1, x2, y2) {
+  const left = Math.min(x1, x2);
+  const top = Math.min(y1, y2);
+  const width = Math.abs(x2 - x1);
+  const height = Math.abs(y2 - y1);
+  const cx = left + width / 2;
+  const cy = top + height / 2;
+
+  dctx.globalCompositeOperation = 'source-over';
+  dctx.strokeStyle = toolColors.circle;
+  dctx.lineWidth = 4;
+  dctx.lineJoin = 'round';
+
+  dctx.beginPath();
+  dctx.ellipse(cx, cy, Math.max(width / 2, 1), Math.max(height / 2, 1), 0, 0, Math.PI * 2);
+  dctx.stroke();
+}
+
+function drawLine(x1, y1, x2, y2) {
+  dctx.globalCompositeOperation = 'source-over';
+  dctx.strokeStyle = toolColors.line;
+  dctx.lineWidth = 4;
+  dctx.lineCap = 'round';
+  dctx.lineJoin = 'round';
+
+  dctx.beginPath();
+  dctx.moveTo(x1, y1);
+  dctx.lineTo(x2, y2);
+  dctx.stroke();
 }
 
 function drawArrow(x1, y1, x2, y2) {
@@ -1205,6 +1304,8 @@ function drawArrow(x1, y1, x2, y2) {
 function previewShape(tool, x1, y1, x2, y2) {
   if (shapeSnapshot) dctx.putImageData(shapeSnapshot, 0, 0);
   if (tool === 'rect') drawRectangle(x1, y1, x2, y2);
+  if (tool === 'circle') drawCircle(x1, y1, x2, y2);
+  if (tool === 'line') drawLine(x1, y1, x2, y2);
   if (tool === 'arrow') drawArrow(x1, y1, x2, y2);
 }
 
