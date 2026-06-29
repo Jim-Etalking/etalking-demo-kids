@@ -23,25 +23,19 @@
      TOP BAR
   ══════════════════════════════════════ */
   #topbar {
-    flex-shrink: 0; height: 48px;
-    background: #16213e;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0; height: 48px; background: #16213e; border-bottom: 1px solid rgba(255,255,255,0.08);
     display: flex; align-items: center; padding: 0 16px; gap: 12px; z-index: 100;
   }
   .brand {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 14px; font-weight: 700; color: #7eb8f7; letter-spacing: 0.3px;
+    display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #7eb8f7; letter-spacing: 0.3px;
   }
   .brand-sub { font-weight: 400; font-size: 11px; color: #5a8fc4; }
   #doc-title {
-    font-size: 12px; color: rgba(255,255,255,0.45);
-    flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;
+    font-size: 12px; color: rgba(255,255,255,0.45); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;
   }
   #topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
   #timer-display {
-    background: rgba(0,0,0,0.3); border-radius: 20px;
-    padding: 3px 12px; font-size: 12px; color: #fff; font-weight: 500;
-    display: flex; align-items: center; gap: 5px;
+    background: rgba(0,0,0,0.3); border-radius: 20px; padding: 3px 12px; font-size: 12px; color: #fff; font-weight: 500; display: flex; align-items: center; gap: 5px;
   }
   .tb-btn, .tb-icon-btn {
     background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15);
@@ -61,23 +55,20 @@
     background: #0f0f18; position: relative; overflow: hidden;
   }
   #pdf-canvas {
-    max-width: 100%; max-height: 100%;
-    box-shadow: 0 8px 48px rgba(0,0,0,0.7); border-radius: 2px; display: block;
+    max-width: 100%; max-height: 100%; box-shadow: 0 8px 48px rgba(0,0,0,0.7); border-radius: 2px; display: block;
   }
   #loading-overlay {
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center; background: #0f0f18; gap: 16px; z-index: 10;
   }
   .spinner {
-    width: 40px; height: 40px; border: 3px solid rgba(126,184,247,0.2);
-    border-top-color: #7eb8f7; border-radius: 50%; animation: spin 0.8s linear infinite;
+    width: 40px; height: 40px; border: 3px solid rgba(126,184,247,0.2); border-top-color: #7eb8f7; border-radius: 50%; animation: spin 0.8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading-overlay p { color: rgba(255,255,255,0.4); font-size: 13px; }
 
   #drop-hint {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 16px; color: rgba(255,255,255,0.25); pointer-events: none;
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: rgba(255,255,255,0.25); pointer-events: none;
   }
   #drop-hint i { font-size: 48px; } #drop-hint p { font-size: 14px; } #drop-hint small { font-size: 11px; opacity: 0.6; }
   #pdf-area.drag-over { outline: 2px dashed #7eb8f7; outline-offset: -12px; }
@@ -85,140 +76,119 @@
   /* ══════════════════════════════════════
      LEFT TOOL HUB
   ══════════════════════════════════════ */
-  #tool-hub {
-    position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 200;
-  }
+  #tool-hub { position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 200; }
   #tool-edge {
-    width: 16px; height: 72px; background: rgba(33,150,243,0.6);
-    border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: rgba(255,255,255,0.8); transition: opacity 0.2s, width 0.2s;
+    width: 16px; height: 72px; background: rgba(33,150,243,0.6); border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.8); transition: opacity 0.2s, width 0.2s;
   }
   #tool-hub:hover #tool-edge { opacity: 0; width: 0; }
   #tool-panel {
-    position: absolute; left: 0; top: 50%; transform: translateY(-50%) translateX(-4px);
-    display: flex; flex-direction: column; align-items: flex-start; gap: 5px;
-    padding: 10px 8px; background: rgba(22,33,62,0.96); backdrop-filter: blur(10px);
-    border-radius: 0 14px 14px 0; border: 0.5px solid rgba(255,255,255,0.12); border-left: none;
-    opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%) translateX(-4px); display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 10px 8px; background: rgba(22,33,62,0.96); backdrop-filter: blur(10px); border-radius: 0 14px 14px 0; border: 0.5px solid rgba(255,255,255,0.12); border-left: none; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
   }
   #tool-hub:hover #tool-panel { opacity: 1; pointer-events: all; transform: translateY(-50%) translateX(0); }
   .tool-btn {
-    width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 15px; color: rgba(255,255,255,0.7); position: relative; transition: all 0.15s;
+    width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; color: rgba(255,255,255,0.7); position: relative; transition: all 0.15s;
   }
   .tool-btn:hover { background: rgba(126,184,247,0.2); transform: scale(1.12); color: #7eb8f7; }
   .tool-btn.active { background: rgba(33,150,243,0.3); color: #7eb8f7; border-color: rgba(126,184,247,0.4); }
   .tool-divider { width: 24px; height: 1px; background: rgba(255,255,255,0.1); margin: 2px 6px; }
 
   /* ══════════════════════════════════════
-     LEFT-BOTTOM: 1/4 CIRCLE DIAL MENU (轉盤目錄)
+     LEFT-BOTTOM: 1/4 CIRCLE DIAL MENU (明亮果凍轉盤)
   ══════════════════════════════════════ */
-  #catalog-zone {
-    position: absolute;
-    left: 14px; bottom: 60px;
-    z-index: 300;
-  }
+  #catalog-zone { position: absolute; left: 14px; bottom: 60px; z-index: 300; }
 
-  /* 觸發按鈕 */
+  /* 觸發按鈕 - 明亮果凍感 */
   #cat-trigger {
     position: relative; z-index: 2;
     width: 48px; height: 48px; border-radius: 50%;
-    background: rgba(30,30,50,0.85);
-    border: 1.5px solid rgba(255,255,255,0.25);
-    backdrop-filter: blur(8px); cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-    font-size: 18px; color: rgba(255,255,255,0.85);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    background: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255,255,255,0.7);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    font-size: 18px; color: #333;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     transition: background 0.2s, transform 0.2s;
   }
-  #cat-trigger .cat-label { font-size: 8px; color: rgba(255,255,255,0.5); line-height: 1; }
+  #cat-trigger .cat-label { font-size: 8px; color: #555; font-weight: bold; line-height: 1; }
 
-  /* 1/4 圓形背景面板 */
+  /* 1/4 圓形背景面板 - 明亮透明果凍 */
   #cat-panel {
-    position: absolute;
-    left: -14px; bottom: -14px; /* 對齊左下角角落 */
+    position: absolute; left: -14px; bottom: -14px;
     width: 320px; height: 320px;
-    border-radius: 0 100% 0 0; /* 打造 1/4 圓 */
-    background: radial-gradient(circle at bottom left, rgba(22,33,62,0.98), rgba(10,14,26,0.92));
-    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 0 100% 0 0;
+    background: radial-gradient(circle at bottom left, rgba(255,255,255,0.92), rgba(240,245,255,0.6));
+    border: 1px solid rgba(255,255,255,0.9);
     border-bottom: none; border-left: none;
-    box-shadow: 8px -8px 40px rgba(0,0,0,0.7);
-    backdrop-filter: blur(12px);
+    box-shadow: 8px -8px 40px rgba(0,0,0,0.12), inset 0 0 20px rgba(255,255,255,0.8);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     
-    /* 預設隱藏與縮小 */
     opacity: 0; transform: scale(0.3); pointer-events: none;
     transform-origin: bottom left;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* 滑鼠懸停展開轉盤 */
-  #catalog-zone:hover #cat-panel {
-    opacity: 1; transform: scale(1); pointer-events: auto;
-  }
-  #catalog-zone:hover #cat-trigger {
-    background: rgba(50,50,80,0.95); transform: scale(1.05);
-  }
+  #catalog-zone:hover #cat-panel { opacity: 1; transform: scale(1); pointer-events: auto; }
+  #catalog-zone:hover #cat-trigger { background: rgba(240,245,255,0.98); transform: scale(1.05); }
 
-  /* 轉盤上的雷達虛線裝飾 */
+  /* 轉盤上的雷達虛線裝飾 - 配合白底改為深色透明 */
   .dial-track {
-    position: absolute; left: 0; bottom: 0;
-    width: 235px; height: 235px;
+    position: absolute; left: 0; bottom: 0; width: 235px; height: 235px;
     border-radius: 0 100% 0 0;
-    border-top: 1.5px dashed rgba(255,255,255,0.15);
-    border-right: 1.5px dashed rgba(255,255,255,0.15);
+    border-top: 1.5px dashed rgba(0,0,0,0.15);
+    border-right: 1.5px dashed rgba(0,0,0,0.15);
     pointer-events: none;
   }
 
-  /* 縮圖的定位容器 */
-  #card-list {
+  /* ───── 中間的等級標示 ───── */
+  #dial-center-info {
     position: absolute;
-    /* 根據觸發按鈕的大小和位移計算，中心點大概在 38, 38 */
-    left: 38px; bottom: 38px;
-    width: 0; height: 0;
+    /* 定位在扇形中間偏左下的空白區域 */
+    left: 85px; bottom: 85px;
+    transform: translate(-50%, 50%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    pointer-events: none; /* 避免干擾滑鼠操作 */
+  }
+  #dial-center-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #ccc; box-shadow: 0 0 12px rgba(0,0,0,0.2);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  #dial-center-text {
+    font-size: 15px; font-weight: 900; color: #666; text-align: center;
+    font-family: 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.5px;
+    transition: color 0.3s; white-space: nowrap;
   }
 
-  /* 縮圖卡片樣式 */
+  /* 縮圖的定位容器 */
+  #card-list { position: absolute; left: 38px; bottom: 38px; width: 0; height: 0; }
+
+  /* 縮圖卡片樣式 - 因應白底稍微調淡陰影 */
   .pg-thumb-card {
-    position: absolute;
-    left: 0; bottom: 0;
-    width: 76px; height: 57px; /* 4:3 比例 */
-    margin-left: -38px; margin-bottom: -28px; /* 讓卡片中心對齊原點 */
-    
-    border-radius: 6px;
-    background: var(--cat-bg);
-    border: 2px solid var(--cat-border);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-    cursor: pointer;
+    position: absolute; left: 0; bottom: 0; width: 76px; height: 57px; 
+    margin-left: -38px; margin-bottom: -28px;
+    border-radius: 6px; background: var(--cat-bg); border: 2px solid var(--cat-border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    
-    /* 加入物理滑動慣性的過渡效果 */
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, border-width 0.2s;
   }
-
-  /* 縮圖 Canvas 設定 */
-  .thumb-canvas {
-    max-width: 92%; max-height: 92%;
-    border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  }
+  .thumb-canvas { max-width: 92%; max-height: 92%; border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 
   /* 頁碼徽章 */
   .thumb-badge {
-    position: absolute;
-    bottom: -10px; right: -10px;
-    width: 24px; height: 24px;
+    position: absolute; bottom: -10px; right: -10px; width: 24px; height: 24px;
     background: #16213e; color: #fff; font-size: 11px; font-weight: bold;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--cat-border); box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    border: 2px solid var(--cat-border); box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   }
 
   /* 轉盤互動狀態 */
-  .pg-thumb-card:hover { border-width: 3px; z-index: 20 !important; filter: brightness(1.2); }
-  .pg-thumb-card.active { border-width: 3px; box-shadow: 0 0 20px var(--cat-border); filter: brightness(1.2); }
+  .pg-thumb-card:hover { border-width: 3px; z-index: 20 !important; filter: brightness(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+  .pg-thumb-card.active { border-width: 3px; box-shadow: 0 0 16px var(--cat-border); filter: brightness(1.1); }
 
   /* 分類顏色變數 (轉盤空白處與邊框的顏色) */
   .lv-green  { --cat-bg: rgba(76, 175, 80, 0.25);  --cat-border: #4caf50; }
-  .lv-yellow { --cat-bg: rgba(255, 167, 38, 0.25); --cat-border: #ffa726; }
+  .lv-yellow { --cat-bg: rgba(249, 168, 37, 0.25); --cat-border: #f9a825; /* 黃色稍微加深以利閱讀 */ }
   .lv-red    { --cat-bg: rgba(239, 83, 80, 0.25);  --cat-border: #ef5350; }
   .lv-purple { --cat-bg: rgba(171, 71, 188, 0.25); --cat-border: #ab47bc; }
 
@@ -226,15 +196,11 @@
   /* ══════════════════════════════════════
      RIGHT-BOTTOM FEATURE FAB
   ══════════════════════════════════════ */
-  #feature-fab {
-    position: absolute; right: 14px; bottom: 58px;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 200;
-  }
+  #feature-fab { position: absolute; right: 14px; bottom: 58px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 200; }
   .fab-btn {
     background: rgba(22,33,62,0.92); border: 0.5px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px);
     border-radius: 22px; color: rgba(255,255,255,0.8); font-size: 12px; padding: 7px 14px; cursor: pointer;
-    display: flex; align-items: center; gap: 7px; box-shadow: 0 3px 12px rgba(0,0,0,0.4);
-    transition: background 0.15s, transform 0.15s; white-space: nowrap;
+    display: flex; align-items: center; gap: 7px; box-shadow: 0 3px 12px rgba(0,0,0,0.4); transition: background 0.15s, transform 0.15s; white-space: nowrap;
   }
   .fab-btn:hover { background: rgba(40,55,100,0.95); transform: translateX(-3px); }
   .fab-btn.active { background: rgba(33,150,243,0.3); border-color: rgba(126,184,247,0.4); color: #7eb8f7; }
@@ -246,29 +212,23 @@
   #draw-overlay canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
   #bottombar {
-    flex-shrink: 0; height: 46px; background: #16213e; border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex; align-items: center; padding: 0 16px; gap: 10px; z-index: 100;
+    flex-shrink: 0; height: 46px; background: #16213e; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; padding: 0 16px; gap: 10px; z-index: 100;
   }
   .nav-btn {
-    width: 32px; height: 32px; border-radius: 7px; background: rgba(255,255,255,0.07);
-    border: 0.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 14px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s;
+    width: 32px; height: 32px; border-radius: 7px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s;
   }
   .nav-btn:hover { background: rgba(255,255,255,0.15); }
   .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   #page-indicator { font-size: 12px; color: rgba(255,255,255,0.5); min-width: 70px; text-align: center; }
   #page-input {
-    width: 40px; height: 28px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.2);
-    border-radius: 5px; color: #fff; font-size: 12px; text-align: center;
+    width: 40px; height: 28px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 5px; color: #fff; font-size: 12px; text-align: center;
   }
   #page-input:focus { outline: none; border-color: #7eb8f7; }
   .zoom-group { display: flex; align-items: center; gap: 6px; margin-left: auto; }
   #zoom-label { font-size: 11px; color: rgba(255,255,255,0.4); min-width: 38px; text-align: center; }
 
   #upload-btn {
-    background: rgba(126,184,247,0.15); border: 0.5px solid rgba(126,184,247,0.3); border-radius: 6px;
-    color: #7eb8f7; font-size: 11px; padding: 5px 12px; cursor: pointer; display: flex; align-items: center;
-    gap: 5px; transition: background 0.15s; margin-left: 12px;
+    background: rgba(126,184,247,0.15); border: 0.5px solid rgba(126,184,247,0.3); border-radius: 6px; color: #7eb8f7; font-size: 11px; padding: 5px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.15s; margin-left: 12px;
   }
   #upload-btn:hover { background: rgba(126,184,247,0.25); }
   #file-input { display: none; }
@@ -314,6 +274,12 @@
     <div id="catalog-zone" onwheel="onDialWheel(event)">
       <div id="cat-panel">
         <div class="dial-track"></div>
+        
+        <div id="dial-center-info">
+          <div id="dial-center-dot"></div>
+          <div id="dial-center-text">Loading...</div>
+        </div>
+
         <div id="card-list"></div>
       </div>
       <div id="cat-trigger">
@@ -396,6 +362,7 @@ function updateNav() {
   document.getElementById('btn-next').disabled = currentPage >= total;
   
   syncDialToPage(currentPage); // 聯動轉盤旋轉
+  updateCenterInfo(currentPage); // 更新扇形中心文字
 }
 
 async function changePage(dir) {
@@ -443,12 +410,20 @@ pdfArea.addEventListener('drop', e => {
 });
 
 /* ═══════════════════════════════════════════════════
-   RADIAL DIAL MENU (1/4 圓形旋轉轉盤)
+   RADIAL DIAL MENU (1/4 圓形旋轉轉盤 + 等級標示)
 ═══════════════════════════════════════════════════ */
 let catalogPages = [];
-let dialOffset = 0;       // 目前轉盤滾動偏移角度
-const DIAL_GAP = 24;      // 每個縮圖之間的夾角 (度)
-const DIAL_RADIUS = 200;  // 轉盤的半徑 (px)
+let dialOffset = 0;       
+const DIAL_GAP = 24;      
+const DIAL_RADIUS = 200;  
+
+// 等級名稱與對應的顏色代碼 (需配合 CSS 變數)
+const lvData = {
+  'green':  { name: 'Pre-Starter', hex: '#4caf50' },
+  'yellow': { name: 'Starter',     hex: '#f9a825' }, // 為了在白底清楚，使用深一點的黃/橘色
+  'red':    { name: 'L1-L2',       hex: '#ef5350' },
+  'purple': { name: 'L3',          hex: '#ab47bc' }
+};
 
 function getLv(i, total) {
   const ratio = i / total;
@@ -464,10 +439,11 @@ function buildCatalog(total) {
   list.innerHTML = '';
   
   for (let i = 0; i < total; i++) {
-    catalogPages.push({ num: i + 1, lv: getLv(i, total) });
+    const levelId = getLv(i, total);
+    catalogPages.push({ num: i + 1, lv: levelId });
     
     const div = document.createElement('div');
-    div.className = `pg-thumb-card lv-${catalogPages[i].lv}`;
+    div.className = `pg-thumb-card lv-${levelId}`;
     div.id = `thumb-card-${i + 1}`;
     div.onclick = () => goToPage(i + 1);
     
@@ -478,20 +454,37 @@ function buildCatalog(total) {
     list.appendChild(div);
   }
   
-  syncDialToPage(1); // 預設歸零並渲染位置
+  syncDialToPage(1); 
+  updateCenterInfo(1);
   
   // 延遲背景提取縮圖畫面
   if (total > 0) setTimeout(renderAllThumbnails, 500);
 }
 
+// ⭐️ 更新扇形中間的顏色與名稱
+function updateCenterInfo(pageNum) {
+  if (!catalogPages.length) return;
+  const pageData = catalogPages[pageNum - 1];
+  if (!pageData) return;
+
+  const info = lvData[pageData.lv];
+  
+  // 更新點的顏色
+  const dot = document.getElementById('dial-center-dot');
+  dot.style.background = info.hex;
+  dot.style.boxShadow = `0 0 12px ${info.hex}`;
+  
+  // 更新文字內容與顏色
+  const textEl = document.getElementById('dial-center-text');
+  textEl.textContent = info.name;
+  textEl.style.color = info.hex;
+}
+
 // 將轉盤自動旋轉至當前頁面置中的位置
 function syncDialToPage(pageNum) {
   const index = pageNum - 1;
-  // 我們希望當前頁面的角度大約落在 40 度左右 (轉盤中間)
-  // 基礎角度 = 80 - index * gap + offset = 40 => offset = index * gap - 40
   dialOffset = (index * DIAL_GAP) - 40;
   
-  // 限制捲動範圍
   const maxOffset = Math.max(0, (catalogPages.length - 1) * DIAL_GAP - 60);
   if (dialOffset < 0) dialOffset = 0;
   if (dialOffset > maxOffset) dialOffset = maxOffset;
@@ -502,7 +495,6 @@ function syncDialToPage(pageNum) {
 // 監聽滑鼠滾輪，滾動時旋轉轉盤
 function onDialWheel(e) {
   e.preventDefault();
-  // 滾輪往下 (deltaY > 0) 代表往後翻，轉盤逆時針轉 (offset 變大)
   dialOffset += e.deltaY > 0 ? 15 : -15;
   
   const maxOffset = Math.max(0, (catalogPages.length - 1) * DIAL_GAP - 60);
@@ -518,18 +510,14 @@ function renderDialPositions() {
     const card = document.getElementById(`thumb-card-${p.num}`);
     if (!card) return;
     
-    // 每個卡片當下的絕對角度
-    // i=0 預設為 80度(最上面)，往下遞減
     const angleDeg = 80 - (i * DIAL_GAP) + dialOffset;
     
-    // 如果卡片轉到 1/4 圓的外面 (小於0度 或 大於90度)，將其淡出縮小
     if (angleDeg < -10 || angleDeg > 100) {
       card.style.opacity = '0';
       card.style.pointerEvents = 'none';
       card.style.transform = `translate(0px, 0px) scale(0.2)`;
       card.classList.remove('active');
     } else {
-      // 轉換成弧度算 X Y 座標
       const angleRad = angleDeg * (Math.PI / 180);
       const x = Math.cos(angleRad) * DIAL_RADIUS;
       const y = Math.sin(angleRad) * DIAL_RADIUS;
@@ -538,9 +526,8 @@ function renderDialPositions() {
       
       card.style.opacity = '1';
       card.style.pointerEvents = 'auto';
-      card.style.zIndex = isActive ? 10 : Math.round(angleDeg); // 前面的蓋住後面的
+      card.style.zIndex = isActive ? 10 : Math.round(angleDeg); 
       
-      // 注意：CSS translate(x, y) 預設 y 往下為正，但我們需要它往上，所以用 -y
       card.style.transform = `translate(${x}px, ${-y}px) scale(${isActive ? 1.15 : 1})`;
       
       if (isActive) card.classList.add('active');
@@ -556,7 +543,7 @@ async function renderAllThumbnails() {
     if (!thumbCanvas) continue;
     try {
       const page = await pdfDoc.getPage(i);
-      const viewport = page.getViewport({ scale: 0.15 }); // 降低解析度以加速選單載入
+      const viewport = page.getViewport({ scale: 0.15 }); 
       thumbCanvas.width = viewport.width;
       thumbCanvas.height = viewport.height;
       await page.render({ canvasContext: thumbCanvas.getContext('2d'), viewport: viewport }).promise;
