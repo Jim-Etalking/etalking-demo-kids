@@ -11,6 +11,13 @@
   :root {
     --theme-hex: #2e7d32; /* 預設深綠 */
     --theme-bg: rgba(76, 175, 80, 0.25); /* 預設淺綠毛玻璃底 */
+
+    /* 統一玻璃材質：上下列、左側工具列共用同一個深色玻璃語言 */
+    --glass-dark: rgba(18, 24, 38, 0.62);
+    --glass-dark-strong: rgba(18, 24, 38, 0.78);
+    --glass-border: rgba(255, 255, 255, 0.32);
+    --glass-border-soft: rgba(255, 255, 255, 0.18);
+    --glass-glow: rgba(255, 255, 255, 0.12);
   }
 
   /* ── Reset & Base ── */
@@ -20,23 +27,93 @@
   #app { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
 
   /* ══════════════════════════════════════
-     TOP BAR
+     TOP BAR｜Full Glass Unified
   ══════════════════════════════════════ */
   #topbar {
-    flex-shrink: 0; height: 48px; background: #16213e; border-bottom: 1px solid rgba(255,255,255,0.08);
-    display: flex; align-items: center; padding: 0 16px; gap: 12px; z-index: 100;
+    flex-shrink: 0;
+    height: 48px;
+    background: linear-gradient(180deg, rgba(28,36,56,0.78), rgba(18,24,38,0.58));
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.26), inset 0 -1px 0 var(--glass-glow);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    z-index: 100;
   }
-  .brand { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #7eb8f7; letter-spacing: 0.3px; }
-  .brand-sub { font-weight: 400; font-size: 11px; color: #5a8fc4; }
-  #doc-title { font-size: 12px; color: rgba(255,255,255,0.45); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
-  #topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-  
-  #timer-display { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 4px 14px; font-size: 13px; color: #fff; font-weight: 500; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
-  
-  .tb-btn, .tb-icon-btn { background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 6px; color: rgba(255,255,255,0.7); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
-  .tb-btn { font-size: 12px; padding: 5px 12px; gap: 5px; }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.92);
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.35);
+  }
+  .brand i {
+    color: var(--theme-hex);
+    filter: drop-shadow(0 0 8px var(--theme-bg));
+  }
+  .brand-sub {
+    font-weight: 600;
+    font-size: 11px;
+    color: rgba(255,255,255,0.58);
+  }
+  #doc-title {
+    font-size: 12px;
+    color: rgba(255,255,255,0.58);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+  }
+  #topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #timer-display {
+    background: rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,0.34);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22), inset 0 0 12px rgba(255,255,255,0.12);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    transition: all 0.3s ease;
+  }
+
+  .tb-btn, .tb-icon-btn {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 9px;
+    color: rgba(255,255,255,0.82);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.08);
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  .tb-btn { font-size: 12px; padding: 6px 12px; gap: 5px; }
   .tb-icon-btn { width: 32px; height: 32px; font-size: 15px; }
-  .tb-btn:hover, .tb-icon-btn:hover { background: rgba(255,255,255,0.14); }
+  .tb-btn:hover, .tb-icon-btn:hover {
+    background: var(--theme-bg);
+    border-color: rgba(255,255,255,0.56);
+    transform: translateY(-1px);
+  }
 
   /* ══════════════════════════════════════
      MAIN AREA & PDF CANVAS
@@ -277,17 +354,94 @@
   .lv-purple { --cat-bg: rgba(171, 71, 188, 0.25); --cat-border: #ab47bc; }
 
   /* ══════════════════════════════════════
-     BOTTOM BAR
+     BOTTOM BAR｜Full Glass Unified
   ══════════════════════════════════════ */
-  #bottombar { flex-shrink: 0; height: 46px; background: #16213e; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; padding: 0 16px; gap: 10px; z-index: 100; }
-  .nav-btn { width: 32px; height: 32px; border-radius: 7px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
-  .nav-btn:hover { background: rgba(255,255,255,0.15); }
-  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  #page-indicator { font-size: 12px; color: rgba(255,255,255,0.5); min-width: 70px; text-align: center; }
-  #page-input { width: 40px; height: 28px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 5px; color: #fff; font-size: 12px; text-align: center; }
-  #page-input:focus { outline: none; border-color: #7eb8f7; }
-  #upload-btn { background: rgba(126,184,247,0.15); border: 0.5px solid rgba(126,184,247,0.3); border-radius: 6px; color: #7eb8f7; font-size: 11px; padding: 5px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.15s; margin-left: auto; }
-  #upload-btn:hover { background: rgba(126,184,247,0.25); }
+  #bottombar {
+    flex-shrink: 0;
+    height: 46px;
+    background: linear-gradient(0deg, rgba(28,36,56,0.78), rgba(18,24,38,0.58));
+    border-top: 1px solid var(--glass-border);
+    box-shadow: 0 -10px 28px rgba(0,0,0,0.26), inset 0 1px 0 var(--glass-glow);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+    z-index: 100;
+  }
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.11);
+    border: 1px solid rgba(255,255,255,0.28);
+    color: rgba(255,255,255,0.86);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.16), inset 0 0 10px rgba(255,255,255,0.08);
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .nav-btn:hover {
+    background: var(--theme-bg);
+    border-color: rgba(255,255,255,0.56);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .nav-btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+    transform: none;
+  }
+  #page-indicator {
+    font-size: 12px;
+    color: rgba(255,255,255,0.64);
+    min-width: 70px;
+    text-align: center;
+    font-weight: 600;
+  }
+  #page-input {
+    width: 42px;
+    height: 29px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.30);
+    border-radius: 9px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.08);
+  }
+  #page-input:focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.78);
+    box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 10px rgba(255,255,255,0.10);
+  }
+  #upload-btn {
+    background: var(--theme-bg);
+    border: 1px solid rgba(255,255,255,0.42);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 7px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-left: auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.16), inset 0 0 12px rgba(255,255,255,0.12);
+  }
+  #upload-btn:hover {
+    background: var(--theme-hex);
+    border-color: rgba(255,255,255,0.72);
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px var(--theme-bg), 0 5px 18px rgba(0,0,0,0.24);
+  }
   #file-input { display: none; }
 
   /* ══════════════════════════════════════
@@ -295,16 +449,34 @@
   ══════════════════════════════════════ */
   :fullscreen #bottombar { display: none; }
   :fullscreen #topbar { 
-    position: absolute; top: 16px; right: 16px; width: auto; 
-    background: transparent; border: none; padding: 0; pointer-events: none; z-index: 9999;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: auto;
+    height: auto;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    pointer-events: none;
+    z-index: 9999;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
   :fullscreen #topbar > *:not(#topbar-right) { display: none; }
   :fullscreen #topbar-right { pointer-events: auto; }
-  :fullscreen #timer-display { background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); border-color: rgba(255,255,255,0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  :fullscreen #timer-display {
+    background: rgba(18,24,38,0.58);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border-color: rgba(255,255,255,0.42);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.38), inset 0 0 14px rgba(255,255,255,0.12);
+  }
   :fullscreen #app { background: #000; }
   :fullscreen #main,
   :fullscreen #pdf-area { background: #000; }
   :fullscreen #canvas-wrapper { box-shadow: none; }
+
 </style>
 </head>
 <body>
