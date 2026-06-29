@@ -282,7 +282,7 @@
   .tool-btn:hover .tool-tooltip { opacity: 1; }
 
   /* ══════════════════════════════════════
-     RIGHT FEATURE HUB (對稱與連動的右側毛玻璃選單)
+     RIGHT FEATURE HUB (⭐️ 完美對稱與連動的右側毛玻璃選單)
   ══════════════════════════════════════ */
   #feature-hub { position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 200; }
   
@@ -1084,33 +1084,64 @@ async function renderAllThumbnails() {
 let currentTool = 'select'; 
 let drawing = false, lastX = 0, lastY = 0;
 let activeTextInput = null;
-let penColor = '#e53935';
 let shapeStartX = 0, shapeStartY = 0;
 let shapeSnapshot = null;
+
+// 每個工具保留自己的顏色，老師切換工具時不用一直重選顏色。
+const toolColors = {
+  pen: '#e53935',       // 鉛筆：紅色
+  text: '#e53935',      // 文字：紅色
+  highlight: '#ffeb3b', // 螢光筆：黃色
+  rect: '#2196f3',      // 框框：藍色
+  arrow: '#ff9800'      // 大箭頭：橘色
+};
+
+// 螢光筆透明度：數字越低越透明。0.28 比原本 0.45 更不會蓋住教材文字。
+const HIGHLIGHT_ALPHA = 0.28;
 
 const drawCanvas = document.getElementById('draw-canvas');
 const dctx = drawCanvas.getContext('2d');
 
 drawCanvas.style.pointerEvents = 'none';
 
+function getColorToolKey(tool = currentTool) {
+  return toolColors[tool] ? tool : 'pen';
+}
+
+function getCurrentToolColor() {
+  return toolColors[getColorToolKey()];
+}
+
+function refreshColorPreview() {
+  const key = getColorToolKey();
+  const color = toolColors[key];
+  const preview = document.getElementById('color-preview');
+  const picker = document.getElementById('color-picker');
+  if (preview) preview.style.backgroundColor = color;
+  if (picker) picker.value = color;
+  if (activeTextInput && currentTool === 'text') activeTextInput.style.color = color;
+}
+
 function setTool(tool) {
   currentTool = tool;
   document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
   const el = document.getElementById('tool-' + tool);
   if (el) el.classList.add('active');
-  
+
   drawCanvas.style.pointerEvents = (tool === 'select') ? 'none' : 'auto';
-  
+
   if (tool === 'text') drawCanvas.style.cursor = 'text';
   else if (tool === 'eraser') drawCanvas.style.cursor = 'cell';
   else if (tool === 'select') drawCanvas.style.cursor = 'default';
   else drawCanvas.style.cursor = 'crosshair';
+
+  refreshColorPreview();
 }
 
 function changeColor(hex) {
-  penColor = hex;
-  document.getElementById('color-preview').style.backgroundColor = hex;
-  if (activeTextInput) activeTextInput.style.color = hex;
+  const key = getColorToolKey();
+  toolColors[key] = hex;
+  refreshColorPreview();
 }
 
 function hexToRgba(hex, alpha) {
@@ -1142,7 +1173,7 @@ function drawRectangle(x1, y1, x2, y2) {
   const width = Math.abs(x2 - x1);
   const height = Math.abs(y2 - y1);
   dctx.globalCompositeOperation = 'source-over';
-  dctx.strokeStyle = penColor;
+  dctx.strokeStyle = toolColors.rect;
   dctx.lineWidth = 4;
   dctx.lineJoin = 'round';
   dctx.strokeRect(left, top, width, height);
@@ -1152,8 +1183,8 @@ function drawArrow(x1, y1, x2, y2) {
   const headLength = 22;
   const angle = Math.atan2(y2 - y1, x2 - x1);
   dctx.globalCompositeOperation = 'source-over';
-  dctx.strokeStyle = penColor;
-  dctx.fillStyle = penColor;
+  dctx.strokeStyle = toolColors.arrow;
+  dctx.fillStyle = toolColors.arrow;
   dctx.lineWidth = 8;
   dctx.lineCap = 'round';
   dctx.lineJoin = 'round';
@@ -1203,17 +1234,17 @@ drawCanvas.addEventListener('mousemove', e => {
   dctx.beginPath();
   dctx.moveTo(lastX, lastY);
   dctx.lineTo(pos.x, pos.y);
-  
+
   if (currentTool === 'eraser') {
     dctx.strokeStyle = 'rgba(0,0,0,1)';
     dctx.globalCompositeOperation = 'destination-out';
     dctx.lineWidth = 30;
   } else if (currentTool === 'highlight') {
-    dctx.strokeStyle = hexToRgba(penColor, 0.45);
+    dctx.strokeStyle = hexToRgba(toolColors.highlight, HIGHLIGHT_ALPHA);
     dctx.globalCompositeOperation = 'source-over';
     dctx.lineWidth = 20;
   } else {
-    dctx.strokeStyle = penColor;
+    dctx.strokeStyle = toolColors.pen;
     dctx.globalCompositeOperation = 'source-over';
     dctx.lineWidth = 3.5;
   }
@@ -1243,9 +1274,9 @@ function clearDrawing() { dctx.clearRect(0, 0, drawCanvas.width, drawCanvas.heig
 // Text Input
 drawCanvas.addEventListener('click', e => {
   if (currentTool !== 'text' || activeTextInput) return;
-  
+
   const pos = getExactPos(e);
-  
+
   activeTextInput = document.createElement('input');
   activeTextInput.type = 'text';
   activeTextInput.placeholder = 'Type here... (Press Enter)';
@@ -1253,7 +1284,7 @@ drawCanvas.addEventListener('click', e => {
   activeTextInput.style.left = pos.cssX + 'px';
   activeTextInput.style.top = (pos.cssY - 16) + 'px'; 
   activeTextInput.style.fontSize = '24px';
-  activeTextInput.style.color = penColor; 
+  activeTextInput.style.color = toolColors.text; 
   activeTextInput.style.background = 'rgba(255,255,255,0.9)';
   activeTextInput.style.border = '2px dashed #7eb8f7';
   activeTextInput.style.outline = 'none';
@@ -1271,7 +1302,7 @@ drawCanvas.addEventListener('click', e => {
     if (val !== '') {
       dctx.globalCompositeOperation = 'source-over';
       dctx.font = `bold 32px 'Segoe UI', system-ui, sans-serif`;
-      dctx.fillStyle = penColor;
+      dctx.fillStyle = toolColors.text;
       dctx.textBaseline = 'top';
       dctx.fillText(val, pos.x + 8, pos.y - 8);
     }
@@ -1282,6 +1313,8 @@ drawCanvas.addEventListener('click', e => {
   activeTextInput.addEventListener('blur', commitText);
   activeTextInput.addEventListener('keydown', ev => { if(ev.key === 'Enter') commitText(); });
 });
+
+refreshColorPreview();
 
 /* ═══════════════════════════════════════════════════
    MISC
