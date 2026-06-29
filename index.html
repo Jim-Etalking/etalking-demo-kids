@@ -11,10 +11,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #0f0f18; }
 
-  /* ── App Shell ── */
-  #app {
-    display: flex; flex-direction: column; width: 100vw; height: 100vh;
-  }
+  #app { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
 
   /* ══════════════════════════════════════
      TOP BAR
@@ -40,8 +37,13 @@
   ══════════════════════════════════════ */
   #main { flex: 1; display: flex; position: relative; overflow: hidden; }
   #pdf-area { flex: 1; display: flex; align-items: center; justify-content: center; background: #0f0f18; position: relative; overflow: hidden; }
-  #pdf-canvas { max-width: 100%; max-height: 100%; box-shadow: 0 8px 48px rgba(0,0,0,0.7); border-radius: 2px; display: block; }
-  #loading-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f0f18; gap: 16px; z-index: 10; }
+  
+  /* 包覆畫布的容器，確保畫筆 100% 對齊 */
+  #canvas-wrapper { position: relative; box-shadow: 0 8px 48px rgba(0,0,0,0.7); display: none; line-height: 0; }
+  #pdf-canvas { display: block; max-width: 100%; max-height: 100%; }
+  #draw-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; cursor: crosshair; touch-action: none; }
+
+  #loading-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f0f18; gap: 16px; z-index: 20; }
   .spinner { width: 40px; height: 40px; border: 3px solid rgba(126,184,247,0.2); border-top-color: #7eb8f7; border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading-overlay p { color: rgba(255,255,255,0.4); font-size: 13px; }
@@ -51,7 +53,7 @@
   #pdf-area.drag-over { outline: 2px dashed #7eb8f7; outline-offset: -12px; }
 
   /* ══════════════════════════════════════
-     LEFT TOOL HUB
+     LEFT TOOL HUB (左側工具列)
   ══════════════════════════════════════ */
   #tool-hub { position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 200; }
   #tool-edge { width: 16px; height: 72px; background: rgba(33,150,243,0.6); border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.8); transition: opacity 0.2s, width 0.2s; }
@@ -62,105 +64,38 @@
   .tool-btn:hover { background: rgba(126,184,247,0.2); transform: scale(1.12); color: #7eb8f7; }
   .tool-btn.active { background: rgba(33,150,243,0.3); color: #7eb8f7; border-color: rgba(126,184,247,0.4); }
   .tool-divider { width: 24px; height: 1px; background: rgba(255,255,255,0.1); margin: 2px 6px; }
+  .tool-tooltip { position: absolute; left: 46px; top: 50%; transform: translateY(-50%); background: rgba(22,33,62,0.95); color: rgba(255,255,255,0.9); font-size: 10px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; pointer-events: none; opacity: 0; border: 0.5px solid rgba(255,255,255,0.1); transition: opacity 0.15s; z-index: 100; }
+  .tool-btn:hover .tool-tooltip { opacity: 1; }
 
   /* ══════════════════════════════════════
-     LEFT-BOTTOM: 1/4 CIRCLE DIAL (純淨透亮毛玻璃)
+     LEFT-BOTTOM: 1/4 CIRCLE DIAL (透亮毛玻璃)
   ══════════════════════════════════════ */
   #catalog-zone { position: absolute; left: 14px; bottom: 60px; z-index: 300; }
-
-  /* 觸發按鈕 - 匹配毛玻璃質感 */
   #cat-trigger {
-    position: relative; z-index: 2;
-    width: 48px; height: 48px; border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    border: 1.5px solid rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-    font-size: 18px; color: #111;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    transition: background 0.2s, transform 0.2s;
+    position: relative; z-index: 2; width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); border: 1.5px solid rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 18px; color: #111; box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: background 0.2s, transform 0.2s;
   }
   #cat-trigger .cat-label { font-size: 8px; color: #333; font-weight: bold; line-height: 1; }
 
-  /* 1/4 圓形背景面板 - 頂級半透明玻璃 */
   #cat-panel {
-    position: absolute; left: -14px; bottom: -14px;
-    width: 330px; height: 330px;
-    border-radius: 0 100% 0 0;
-    
-    /* 核心：半透明白 + 強烈模糊 + 白色內光暈 */
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-bottom: none; border-left: none;
-    box-shadow: 8px -8px 40px rgba(0,0,0,0.15), inset 0 0 24px rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(24px) saturate(130%); -webkit-backdrop-filter: blur(24px) saturate(130%);
-    
-    opacity: 0; transform: scale(0.3); pointer-events: none;
-    transform-origin: bottom left;
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute; left: -14px; bottom: -14px; width: 330px; height: 330px; border-radius: 0 100% 0 0;
+    background: rgba(255, 255, 255, 0.25); border: 1px solid rgba(255, 255, 255, 0.6); border-bottom: none; border-left: none; box-shadow: 8px -8px 40px rgba(0,0,0,0.15), inset 0 0 24px rgba(255, 255, 255, 0.6); backdrop-filter: blur(24px) saturate(130%); -webkit-backdrop-filter: blur(24px) saturate(130%); opacity: 0; transform: scale(0.3); pointer-events: none; transform-origin: bottom left; transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* 滑鼠懸停展開轉盤 */
   #catalog-zone:hover #cat-panel { opacity: 1; transform: scale(1); pointer-events: auto; }
   #catalog-zone:hover #cat-trigger { background: rgba(255, 255, 255, 0.7); transform: scale(1.05); }
 
-  /* 雷達虛線裝飾 - 改為純白半透明，在玻璃上更好看 */
-  .dial-track {
-    position: absolute; left: 0; bottom: 0; width: 245px; height: 245px;
-    border-radius: 0 100% 0 0;
-    border-top: 1.5px dashed rgba(255, 255, 255, 0.6);
-    border-right: 1.5px dashed rgba(255, 255, 255, 0.6);
-    pointer-events: none;
-  }
+  .dial-track { position: absolute; left: 0; bottom: 0; width: 245px; height: 245px; border-radius: 0 100% 0 0; border-top: 1.5px dashed rgba(255, 255, 255, 0.6); border-right: 1.5px dashed rgba(255, 255, 255, 0.6); pointer-events: none; }
 
-  /* ───── ⭐️ 扇形中間的巨大等級標示 ───── */
-  #dial-center-info {
-    position: absolute;
-    /* 調整到轉盤左下角最舒服的視覺中心點 */
-    left: 105px; bottom: 105px;
-    transform: translate(-50%, 50%);
-    pointer-events: none; /* 避免干擾滑鼠點擊 */
-  }
-  
-  #dial-center-text {
-    font-size: 26px; /* 加大字體 */
-    font-weight: 900; /* 極粗體 */
-    text-align: center;
-    font-family: 'Segoe UI', 'Nunito', system-ui, sans-serif;
-    letter-spacing: 0.5px;
-    /* 加入強烈的白色光暈，確保在任何底圖上都不會被吃掉 */
-    text-shadow: 0 2px 12px rgba(255, 255, 255, 1), 0 0 6px rgba(255, 255, 255, 0.8);
-    transition: color 0.3s ease;
-    white-space: nowrap;
-  }
+  #dial-center-info { position: absolute; left: 105px; bottom: 105px; transform: translate(-50%, 50%); pointer-events: none; }
+  #dial-center-text { font-size: 26px; font-weight: 900; text-align: center; font-family: 'Segoe UI', 'Nunito', system-ui, sans-serif; letter-spacing: 0.5px; text-shadow: 0 2px 12px rgba(255, 255, 255, 1), 0 0 6px rgba(255, 255, 255, 0.8); transition: color 0.3s ease; white-space: nowrap; }
 
-  /* 縮圖的定位容器 */
   #card-list { position: absolute; left: 38px; bottom: 38px; width: 0; height: 0; }
-
-  /* 縮圖卡片樣式 */
-  .pg-thumb-card {
-    position: absolute; left: 0; bottom: 0; width: 76px; height: 57px; 
-    margin-left: -38px; margin-bottom: -28px;
-    border-radius: 6px; background: var(--cat-bg); border: 2px solid var(--cat-border);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, border-width 0.2s;
-  }
-  .thumb-canvas { max-width: 92%; max-height: 92%; border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
-
-  /* 頁碼徽章 */
-  .thumb-badge {
-    position: absolute; bottom: -10px; right: -10px; width: 24px; height: 24px;
-    background: #16213e; color: #fff; font-size: 11px; font-weight: bold;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--cat-border); box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  }
-
-  /* 轉盤互動狀態 */
+  .pg-thumb-card { position: absolute; left: 0; bottom: 0; width: 76px; height: 57px; margin-left: -38px; margin-bottom: -28px; border-radius: 6px; background: var(--cat-bg); border: 2px solid var(--cat-border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, border-width 0.2s; }
+  .thumb-canvas { max-width: 92%; max-height: 92%; border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); pointer-events: none; }
+  .thumb-badge { position: absolute; bottom: -10px; right: -10px; width: 24px; height: 24px; background: #16213e; color: #fff; font-size: 11px; font-weight: bold; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--cat-border); box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
   .pg-thumb-card:hover { border-width: 3px; z-index: 20 !important; filter: brightness(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
   .pg-thumb-card.active { border-width: 3px; box-shadow: 0 0 16px var(--cat-border); filter: brightness(1.1); }
 
-  /* 分類顏色變數 (轉盤空白處與邊框的顏色) */
   .lv-green  { --cat-bg: rgba(76, 175, 80, 0.25);  --cat-border: #4caf50; }
   .lv-yellow { --cat-bg: rgba(249, 168, 37, 0.25); --cat-border: #f9a825; }
   .lv-red    { --cat-bg: rgba(239, 83, 80, 0.25);  --cat-border: #ef5350; }
@@ -170,20 +105,13 @@
      RIGHT-BOTTOM FEATURE FAB
   ══════════════════════════════════════ */
   #feature-fab { position: absolute; right: 14px; bottom: 58px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 200; }
-  .fab-btn {
-    background: rgba(22,33,62,0.92); border: 0.5px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-    border-radius: 22px; color: rgba(255,255,255,0.8); font-size: 12px; padding: 7px 14px; cursor: pointer;
-    display: flex; align-items: center; gap: 7px; box-shadow: 0 3px 12px rgba(0,0,0,0.4); transition: background 0.15s, transform 0.15s; white-space: nowrap;
-  }
+  .fab-btn { background: rgba(22,33,62,0.92); border: 0.5px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px); border-radius: 22px; color: rgba(255,255,255,0.8); font-size: 12px; padding: 7px 14px; cursor: pointer; display: flex; align-items: center; gap: 7px; box-shadow: 0 3px 12px rgba(0,0,0,0.4); transition: background 0.15s, transform 0.15s; white-space: nowrap; }
   .fab-btn:hover { background: rgba(40,55,100,0.95); transform: translateX(-3px); }
   .fab-btn.active { background: rgba(33,150,243,0.3); border-color: rgba(126,184,247,0.4); color: #7eb8f7; }
 
   /* ══════════════════════════════════════
-     DRAW OVERLAY & BOTTOM BAR
+     BOTTOM BAR (移除了縮放按鈕)
   ══════════════════════════════════════ */
-  #draw-overlay { position: absolute; inset: 0; cursor: crosshair; display: none; z-index: 50; }
-  #draw-overlay canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-
   #bottombar { flex-shrink: 0; height: 46px; background: #16213e; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; padding: 0 16px; gap: 10px; z-index: 100; }
   .nav-btn { width: 32px; height: 32px; border-radius: 7px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
   .nav-btn:hover { background: rgba(255,255,255,0.15); }
@@ -191,10 +119,9 @@
   #page-indicator { font-size: 12px; color: rgba(255,255,255,0.5); min-width: 70px; text-align: center; }
   #page-input { width: 40px; height: 28px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 5px; color: #fff; font-size: 12px; text-align: center; }
   #page-input:focus { outline: none; border-color: #7eb8f7; }
-  .zoom-group { display: flex; align-items: center; gap: 6px; margin-left: auto; }
-  #zoom-label { font-size: 11px; color: rgba(255,255,255,0.4); min-width: 38px; text-align: center; }
-
-  #upload-btn { background: rgba(126,184,247,0.15); border: 0.5px solid rgba(126,184,247,0.3); border-radius: 6px; color: #7eb8f7; font-size: 11px; padding: 5px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.15s; margin-left: 12px; }
+  
+  /* 靠右對齊上傳按鈕 */
+  #upload-btn { background: rgba(126,184,247,0.15); border: 0.5px solid rgba(126,184,247,0.3); border-radius: 6px; color: #7eb8f7; font-size: 11px; padding: 5px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.15s; margin-left: auto; }
   #upload-btn:hover { background: rgba(126,184,247,0.25); }
   #file-input { display: none; }
 
@@ -211,7 +138,6 @@
     <div id="topbar-right">
       <div id="timer-display"><i class="ti ti-clock" style="font-size:13px;"></i> <span id="timer-val">00:00</span></div>
       <button class="tb-btn" onclick="toggleMode()"><i class="ti ti-user" id="mode-icon"></i> <span id="mode-label">老師模式</span></button>
-      <button class="tb-icon-btn" onclick="toggleFullscreen()" title="全螢幕"><i class="ti ti-arrows-maximize"></i></button>
     </div>
   </div>
 
@@ -220,36 +146,46 @@
     <div id="pdf-area">
       <div id="loading-overlay" style="display:none;"><div class="spinner"></div><p>載入中...</p></div>
       <div id="drop-hint"><i class="ti ti-file-type-pdf" style="color:rgba(126,184,247,0.4);"></i><p>拖曳 PDF 到這裡</p></div>
-      <canvas id="pdf-canvas" style="display:none;"></canvas>
-      <div id="draw-overlay"><canvas id="draw-canvas"></canvas></div>
+      
+      <div id="canvas-wrapper">
+        <canvas id="pdf-canvas"></canvas>
+        <canvas id="draw-canvas"></canvas>
+      </div>
     </div>
 
     <div id="tool-hub">
       <div id="tool-edge"><i class="ti ti-chevron-right"></i></div>
       <div id="tool-panel">
-        <button class="tool-btn active" id="tool-select" onclick="setTool('select')"><i class="ti ti-cursor-text"></i></button>
-        <button class="tool-btn" id="tool-pen" onclick="setTool('pen')"><i class="ti ti-pencil"></i></button>
-        <button class="tool-btn" id="tool-highlight" onclick="setTool('highlight')"><i class="ti ti-highlight"></i></button>
-        <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')"><i class="ti ti-eraser"></i></button>
+        <button class="tool-btn" id="tool-text" onclick="setTool('text')">
+          <i class="ti ti-writing"></i><span class="tool-tooltip">輸入文字</span>
+        </button>
+        <button class="tool-btn active" id="tool-pen" onclick="setTool('pen')">
+          <i class="ti ti-pencil"></i><span class="tool-tooltip">鉛筆</span>
+        </button>
+        <button class="tool-btn" id="tool-highlight" onclick="setTool('highlight')">
+          <i class="ti ti-highlight"></i><span class="tool-tooltip">螢光筆</span>
+        </button>
+        <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">
+          <i class="ti ti-eraser"></i><span class="tool-tooltip">橡皮擦</span>
+        </button>
         <div class="tool-divider"></div>
-        <button class="tool-btn" onclick="clearDrawing()"><i class="ti ti-trash"></i></button>
+        <button class="tool-btn" onclick="clearDrawing()">
+          <i class="ti ti-trash"></i><span class="tool-tooltip">清除全部</span>
+        </button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" onclick="toggleFullscreen()">
+          <i class="ti ti-arrows-maximize"></i><span class="tool-tooltip">全螢幕</span>
+        </button>
       </div>
     </div>
 
     <div id="catalog-zone" onwheel="onDialWheel(event)">
       <div id="cat-panel">
         <div class="dial-track"></div>
-        
-        <div id="dial-center-info">
-          <div id="dial-center-text">Loading...</div>
-        </div>
-
+        <div id="dial-center-info"><div id="dial-center-text">Loading...</div></div>
         <div id="card-list"></div>
       </div>
-      <div id="cat-trigger">
-        <i class="ti ti-layout-list"></i>
-        <span class="cat-label">目錄</span>
-      </div>
+      <div id="cat-trigger"><i class="ti ti-layout-list"></i><span class="cat-label">目錄</span></div>
     </div>
 
     <div id="feature-fab">
@@ -258,31 +194,29 @@
       <button class="fab-btn" id="fab-summary" onclick="toggleFab('summary')"><i class="ti ti-chart-bar"></i> Summary</button>
     </div>
 
-  </div><div id="bottombar">
+  </div>
+
+  <div id="bottombar">
     <button class="nav-btn" id="btn-prev" onclick="changePage(-1)" disabled><i class="ti ti-chevron-left"></i></button>
     <input id="page-input" type="number" min="1" value="1" onchange="goToPage(this.value)"/>
     <span id="page-indicator">/ —</span>
     <button class="nav-btn" id="btn-next" onclick="changePage(1)" disabled><i class="ti ti-chevron-right"></i></button>
     
-    <div class="zoom-group">
-      <button class="nav-btn" onclick="changeZoom(-0.1)"><i class="ti ti-minus"></i></button>
-      <span id="zoom-label">100%</span>
-      <button class="nav-btn" onclick="changeZoom(0.1)"><i class="ti ti-plus"></i></button>
-      <button class="nav-btn" onclick="setZoom(1)" style="font-size:11px;width:auto;padding:0 8px;">重設</button>
-    </div>
-
     <label id="upload-btn"><i class="ti ti-upload"></i> 載入 PDF<input id="file-input" type="file" accept=".pdf" onchange="loadPDFFile(this)"/></label>
   </div>
 
-</div><script>
+</div>
+
+<script>
 /* ═══════════════════════════════════════════════════
-   PDF.js Setup
+   PDF.js Setup & Auto Fit Logic
 ═══════════════════════════════════════════════════ */
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-let pdfDoc = null, currentPage = 1, zoomScale = 1.3, renderTask = null;
+let pdfDoc = null, currentPage = 1, renderTask = null;
 const canvas = document.getElementById('pdf-canvas');
 const ctx = canvas.getContext('2d');
+const wrapper = document.getElementById('canvas-wrapper');
 
 function showLoading(show) { document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none'; }
 
@@ -293,10 +227,10 @@ async function loadPDF(src) {
     pdfDoc = await pdfjsLib.getDocument(src).promise;
     currentPage = 1;
     buildCatalog(pdfDoc.numPages);
+    wrapper.style.display = 'inline-block';
     await renderPage(currentPage);
     updateNav();
     document.getElementById('doc-title').textContent = (typeof src === 'string' ? src.split('/').pop().replace('.pdf','') : src.name) || 'PDF 教材';
-    canvas.style.display = 'block';
   } catch(e) {
     alert('PDF 載入失敗：' + e.message);
     document.getElementById('drop-hint').style.display = 'flex';
@@ -304,18 +238,38 @@ async function loadPDF(src) {
   showLoading(false);
 }
 
+// ⭐️ 自動最佳化版面大小 (取代手動縮放)
 async function renderPage(num) {
   if (!pdfDoc) return;
   if (renderTask) { renderTask.cancel(); }
   const page = await pdfDoc.getPage(num);
-  const vp = page.getViewport({ scale: zoomScale });
-  canvas.width = vp.width; canvas.height = vp.height;
+  
+  const container = document.getElementById('pdf-area');
+  const maxWidth = container.clientWidth - 40;  // 預留邊距
+  const maxHeight = container.clientHeight - 40;
+
+  const vpUnscaled = page.getViewport({ scale: 1 });
+  const scale = Math.min(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
+  const vp = page.getViewport({ scale: scale });
+  
+  canvas.width = vp.width; 
+  canvas.height = vp.height;
+  wrapper.style.width = vp.width + 'px';
+  wrapper.style.height = vp.height + 'px';
+
   renderTask = page.render({ canvasContext: ctx, viewport: vp });
   try { await renderTask.promise; } catch(e) { }
   
   const dc = document.getElementById('draw-canvas');
   dc.width = canvas.width; dc.height = canvas.height;
 }
+
+// 螢幕大小改變時自動重新適應
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { if (pdfDoc) renderPage(currentPage); }, 300);
+});
 
 function updateNav() {
   const total = pdfDoc ? pdfDoc.numPages : 0;
@@ -324,8 +278,7 @@ function updateNav() {
   document.getElementById('page-input').max = total;
   document.getElementById('btn-prev').disabled = currentPage <= 1;
   document.getElementById('btn-next').disabled = currentPage >= total;
-  
-  syncDialToPage(currentPage); // 當頁碼改變時，將該頁轉到中心點
+  syncDialToPage(currentPage); 
 }
 
 async function changePage(dir) {
@@ -343,13 +296,6 @@ async function goToPage(n) {
   currentPage = n;
   await renderPage(currentPage);
   updateNav();
-}
-
-function changeZoom(delta) { setZoom(zoomScale + delta); }
-async function setZoom(z) {
-  zoomScale = Math.max(0.5, Math.min(3, z));
-  document.getElementById('zoom-label').textContent = Math.round(zoomScale * 100) + '%';
-  if (pdfDoc) await renderPage(currentPage);
 }
 
 function loadPDFFile(input) {
@@ -373,19 +319,18 @@ pdfArea.addEventListener('drop', e => {
 });
 
 /* ═══════════════════════════════════════════════════
-   RADIAL DIAL MENU (玻璃轉盤 + 連動文字)
+   RADIAL DIAL MENU 
 ═══════════════════════════════════════════════════ */
 let catalogPages = [];
 let dialOffset = 0;       
 const DIAL_GAP = 24;      
-const DIAL_RADIUS = 210; // 稍微調大一點半徑，讓卡片分散更漂亮 
+const DIAL_RADIUS = 210; 
 
-// 定義文字顯示時，為了在白底下有極高辨識度，採用較飽和的深色
 const lvData = {
-  'green':  { name: 'Pre-Starter', hex: '#2e7d32' }, // 深綠
-  'yellow': { name: 'Starter',     hex: '#f57f17' }, // 深橘黃
-  'red':    { name: 'L1-L2',       hex: '#c62828' }, // 深紅
-  'purple': { name: 'L3',          hex: '#6a1b9a' }  // 深紫
+  'green':  { name: 'Pre-Starter', hex: '#2e7d32' },
+  'yellow': { name: 'Starter',     hex: '#f57f17' },
+  'red':    { name: 'L1-L2',       hex: '#c62828' },
+  'purple': { name: 'L3',          hex: '#6a1b9a' } 
 };
 
 function getLv(i, total) {
@@ -400,29 +345,20 @@ function buildCatalog(total) {
   catalogPages = [];
   const list = document.getElementById('card-list');
   list.innerHTML = '';
-  
   for (let i = 0; i < total; i++) {
     const levelId = getLv(i, total);
     catalogPages.push({ num: i + 1, lv: levelId });
-    
     const div = document.createElement('div');
     div.className = `pg-thumb-card lv-${levelId}`;
     div.id = `thumb-card-${i + 1}`;
     div.onclick = () => goToPage(i + 1);
-    
-    div.innerHTML = `
-      <canvas id="thumb-canvas-${i + 1}" class="thumb-canvas"></canvas>
-      <div class="thumb-badge">${i + 1}</div>
-    `;
+    div.innerHTML = `<canvas id="thumb-canvas-${i + 1}" class="thumb-canvas"></canvas><div class="thumb-badge">${i + 1}</div>`;
     list.appendChild(div);
   }
-  
   syncDialToPage(1); 
-  
   if (total > 0) setTimeout(renderAllThumbnails, 500);
 }
 
-// ⭐️ 動態更新扇形中間的文字 (連動邏輯)
 function updateCenterText(levelId) {
   const info = lvData[levelId];
   const textEl = document.getElementById('dial-center-text');
@@ -432,36 +368,26 @@ function updateCenterText(levelId) {
   }
 }
 
-// 改變了邊界限制！讓當前頁面可以完美的停在 40度（視覺正中心）
 function syncDialToPage(pageNum) {
   const index = pageNum - 1;
-  // 目標是讓當前頁面落在 40 度角
   dialOffset = (index * DIAL_GAP) - 40;
-  
   const minOffset = -40;
   const maxOffset = (catalogPages.length - 1) * DIAL_GAP - 40;
-  
   if (dialOffset < minOffset) dialOffset = minOffset;
   if (dialOffset > maxOffset) dialOffset = maxOffset;
-  
   renderDialPositions();
 }
 
-// 監聽滑鼠滾輪
 function onDialWheel(e) {
   e.preventDefault();
   dialOffset += e.deltaY > 0 ? 15 : -15;
-  
   const minOffset = -40;
   const maxOffset = (catalogPages.length - 1) * DIAL_GAP - 40;
-  
   if (dialOffset < minOffset) dialOffset = minOffset;
   if (dialOffset > maxOffset) dialOffset = maxOffset;
-  
   renderDialPositions();
 }
 
-// 根據角度計算縮圖位置，並「自動尋找最靠近中心的卡片」來改變文字
 function renderDialPositions() {
   let closestPage = null;
   let minDiff = 999;
@@ -471,40 +397,22 @@ function renderDialPositions() {
     if (!card) return;
     
     const angleDeg = 80 - (i * DIAL_GAP) + dialOffset;
-    
-    // ⭐️ 核心邏輯：找出哪一張卡片目前最靠近轉盤中心點 (40度)
     const diffToCenter = Math.abs(angleDeg - 40);
-    if (diffToCenter < minDiff) {
-      minDiff = diffToCenter;
-      closestPage = p;
-    }
+    if (diffToCenter < minDiff) { minDiff = diffToCenter; closestPage = p; }
     
     if (angleDeg < -10 || angleDeg > 100) {
-      card.style.opacity = '0';
-      card.style.pointerEvents = 'none';
-      card.style.transform = `translate(0px, 0px) scale(0.2)`;
-      card.classList.remove('active');
+      card.style.opacity = '0'; card.style.pointerEvents = 'none'; card.style.transform = `translate(0px, 0px) scale(0.2)`; card.classList.remove('active');
     } else {
       const angleRad = angleDeg * (Math.PI / 180);
       const x = Math.cos(angleRad) * DIAL_RADIUS;
       const y = Math.sin(angleRad) * DIAL_RADIUS;
-      
       const isActive = (currentPage === p.num);
-      
-      card.style.opacity = '1';
-      card.style.pointerEvents = 'auto';
-      card.style.zIndex = isActive ? 10 : Math.round(angleDeg); 
+      card.style.opacity = '1'; card.style.pointerEvents = 'auto'; card.style.zIndex = isActive ? 10 : Math.round(angleDeg); 
       card.style.transform = `translate(${x}px, ${-y}px) scale(${isActive ? 1.15 : 1})`;
-      
-      if (isActive) card.classList.add('active');
-      else card.classList.remove('active');
+      if (isActive) card.classList.add('active'); else card.classList.remove('active');
     }
   });
-
-  // 把中心文字更新為那張「最靠近中心點」卡片的等級！
-  if (closestPage) {
-    updateCenterText(closestPage.lv);
-  }
+  if (closestPage) updateCenterText(closestPage.lv);
 }
 
 async function renderAllThumbnails() {
@@ -515,19 +423,19 @@ async function renderAllThumbnails() {
     try {
       const page = await pdfDoc.getPage(i);
       const viewport = page.getViewport({ scale: 0.15 }); 
-      thumbCanvas.width = viewport.width;
-      thumbCanvas.height = viewport.height;
+      thumbCanvas.width = viewport.width; thumbCanvas.height = viewport.height;
       await page.render({ canvasContext: thumbCanvas.getContext('2d'), viewport: viewport }).promise;
     } catch (e) {}
   }
 }
 
 /* ═══════════════════════════════════════════════════
-   DRAWING TOOLS
+   DRAWING TOOLS (修正座標對齊與加入文字輸入)
 ═══════════════════════════════════════════════════ */
-let currentTool = 'select';
+let currentTool = 'pen';
 let drawing = false, lastX = 0, lastY = 0;
-const drawOverlay = document.getElementById('draw-overlay');
+let activeTextInput = null;
+
 const drawCanvas = document.getElementById('draw-canvas');
 const dctx = drawCanvas.getContext('2d');
 
@@ -536,30 +444,96 @@ function setTool(tool) {
   document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
   const el = document.getElementById('tool-' + tool);
   if (el) el.classList.add('active');
-  drawOverlay.style.display = (tool === 'select' || tool === 'text') ? 'none' : 'block';
-  drawCanvas.style.cursor = tool === 'eraser' ? 'cell' : (tool !== 'select' ? 'crosshair' : 'default');
+  
+  if (tool === 'text') drawCanvas.style.cursor = 'text';
+  else if (tool === 'eraser') drawCanvas.style.cursor = 'cell';
+  else drawCanvas.style.cursor = 'crosshair';
 }
 
-drawCanvas.addEventListener('mousedown', e => { drawing = true; [lastX, lastY] = [e.offsetX, e.offsetY]; });
+// ⭐️ 完美座標轉換公式 (無視 CSS 縮放)
+function getExactPos(e) {
+  const rect = drawCanvas.getBoundingClientRect();
+  const scaleX = drawCanvas.width / rect.width;
+  const scaleY = drawCanvas.height / rect.height;
+  return {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top) * scaleY,
+    cssX: e.clientX - rect.left,
+    cssY: e.clientY - rect.top
+  };
+}
+
+drawCanvas.addEventListener('mousedown', e => {
+  if (currentTool === 'text') return; // 文字工具交給 click 處理
+  drawing = true; 
+  const pos = getExactPos(e);
+  [lastX, lastY] = [pos.x, pos.y]; 
+});
+
 drawCanvas.addEventListener('mousemove', e => {
   if (!drawing) return;
-  dctx.beginPath(); dctx.moveTo(lastX, lastY); dctx.lineTo(e.offsetX, e.offsetY);
+  const pos = getExactPos(e);
+  dctx.beginPath(); dctx.moveTo(lastX, lastY); dctx.lineTo(pos.x, pos.y);
+  
   if (currentTool === 'eraser') {
-    dctx.strokeStyle = 'rgba(0,0,0,1)'; dctx.globalCompositeOperation = 'destination-out'; dctx.lineWidth = 24;
+    dctx.strokeStyle = 'rgba(0,0,0,1)'; dctx.globalCompositeOperation = 'destination-out'; dctx.lineWidth = 30;
   } else if (currentTool === 'highlight') {
-    dctx.strokeStyle = 'rgba(255,235,59,0.45)'; dctx.globalCompositeOperation = 'source-over'; dctx.lineWidth = 18;
+    dctx.strokeStyle = 'rgba(255,235,59,0.45)'; dctx.globalCompositeOperation = 'source-over'; dctx.lineWidth = 20;
   } else {
-    dctx.strokeStyle = '#e53935'; dctx.globalCompositeOperation = 'source-over'; dctx.lineWidth = 2.5;
+    dctx.strokeStyle = '#e53935'; dctx.globalCompositeOperation = 'source-over'; dctx.lineWidth = 3;
   }
-  dctx.lineCap = 'round'; dctx.stroke();
-  [lastX, lastY] = [e.offsetX, e.offsetY];
+  dctx.lineCap = 'round'; dctx.lineJoin = 'round'; dctx.stroke();
+  [lastX, lastY] = [pos.x, pos.y];
 });
+
 drawCanvas.addEventListener('mouseup', () => drawing = false);
 drawCanvas.addEventListener('mouseleave', () => drawing = false);
 function clearDrawing() { dctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height); }
 
+// ⭐️ 輸入文字功能
+drawCanvas.addEventListener('click', e => {
+  if (currentTool !== 'text' || activeTextInput) return;
+  
+  const pos = getExactPos(e);
+  
+  activeTextInput = document.createElement('input');
+  activeTextInput.type = 'text';
+  activeTextInput.placeholder = '輸入文字...';
+  activeTextInput.style.position = 'absolute';
+  activeTextInput.style.left = pos.cssX + 'px';
+  activeTextInput.style.top = (pos.cssY - 14) + 'px'; // 稍微上移對齊中心
+  activeTextInput.style.fontSize = '24px';
+  activeTextInput.style.color = '#e53935';
+  activeTextInput.style.background = 'rgba(255,255,255,0.8)';
+  activeTextInput.style.border = '2px dashed #7eb8f7';
+  activeTextInput.style.outline = 'none';
+  activeTextInput.style.padding = '4px 8px';
+  activeTextInput.style.borderRadius = '4px';
+  activeTextInput.style.zIndex = 1000;
+
+  wrapper.appendChild(activeTextInput);
+  activeTextInput.focus();
+
+  const commitText = () => {
+    if (!activeTextInput) return;
+    const val = activeTextInput.value.trim();
+    if (val !== '') {
+      dctx.globalCompositeOperation = 'source-over';
+      dctx.font = `bold 32px sans-serif`; // 內部渲染尺寸較大，確保清晰
+      dctx.fillStyle = '#e53935';
+      dctx.textBaseline = 'top';
+      dctx.fillText(val, pos.x + 8, pos.y - 10);
+    }
+    activeTextInput.remove();
+    activeTextInput = null;
+  };
+
+  activeTextInput.addEventListener('blur', commitText);
+  activeTextInput.addEventListener('keydown', ev => { if(ev.key === 'Enter') commitText(); });
+});
+
 /* ═══════════════════════════════════════════════════
-   MISC (Mode / Features / Timer)
+   MISC (Mode / Features / Timer / Fullscreen)
 ═══════════════════════════════════════════════════ */
 let isTeacher = true;
 function toggleMode() {
@@ -574,9 +548,7 @@ const fabState = { sound: false, interact: false, summary: false };
 function toggleFab(name) {
   fabState[name] = !fabState[name];
   document.getElementById('fab-' + name).classList.toggle('active', fabState[name]);
-  if(fabState[name]) {
-    setTimeout(() => { fabState[name]=false; document.getElementById('fab-'+name).classList.remove('active'); }, 2000);
-  }
+  if(fabState[name]) { setTimeout(() => { fabState[name]=false; document.getElementById('fab-'+name).classList.remove('active'); }, 2000); }
 }
 
 let timerSec = 0;
@@ -590,9 +562,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changePage(1);
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changePage(-1);
   if (e.key === 'f' || e.key === 'F') toggleFullscreen();
-  if (e.key === 'p') setTool('pen');
-  if (e.key === 'e') setTool('eraser');
-  if (e.key === 'Escape') setTool('select');
 });
 
 function toggleFullscreen() {
@@ -600,18 +569,11 @@ function toggleFullscreen() {
   else document.exitFullscreen();
 }
 
-/* ═══════════════════════════════════════════════════
-   AUTO LOAD
-═══════════════════════════════════════════════════ */
 (function() {
   const params = new URLSearchParams(window.location.search);
   const pdfUrl = params.get('url');
-  if (pdfUrl) {
-    loadPDF(decodeURIComponent(pdfUrl));
-  } else {
-    // 讀取預設教材
-    loadPDF('424417-kids-2.0-demo_placement-202510.pdf');
-  }
+  if (pdfUrl) loadPDF(decodeURIComponent(pdfUrl));
+  else loadPDF('424417-kids-2.0-demo_placement-202510.pdf'); // 讀取預設教材
 })();
 </script>
 </body>
