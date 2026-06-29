@@ -506,8 +506,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 4px 7px;
+    flex-wrap: wrap;
+    width: 126px;
+    gap: 4px;
+    padding: 4px 6px;
     border-radius: 999px;
     background: rgba(18, 24, 38, 0.18);
     border: 1px solid rgba(255,255,255,0.18);
@@ -517,28 +519,35 @@
     pointer-events: auto;
   }
   .dial-level-dot {
-    width: 13px;
-    height: 13px;
+    width: 11px;
+    height: 11px;
     border-radius: 50%;
-    border: 1.6px solid rgba(255,255,255,0.86);
+    border: 1.4px solid rgba(255,255,255,0.86);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.24), inset 0 0 5px rgba(255,255,255,0.22);
-    opacity: 0.84;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.24), inset 0 0 4px rgba(255,255,255,0.22);
+    opacity: 0.82;
     transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
   }
   .dial-level-dot:hover {
-    transform: scale(1.25);
+    transform: scale(1.30);
     opacity: 1;
   }
   .dial-level-dot.active {
-    transform: scale(1.30);
+    transform: scale(1.38);
     opacity: 1;
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.38), 0 0 15px currentColor, inset 0 0 5px rgba(255,255,255,0.26);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.38), 0 0 14px currentColor, inset 0 0 5px rgba(255,255,255,0.26);
   }
-  .dot-green  { background: #4caf50; color: #4caf50; }
-  .dot-yellow { background: #f9a825; color: #f9a825; }
-  .dot-red    { background: #ef5350; color: #ef5350; }
-  .dot-purple { background: #ab47bc; color: #ab47bc; }
+
+  .dot-greetings { background: #26c6da; color: #26c6da; }
+  .dot-pre       { background: #4caf50; color: #4caf50; }
+  .dot-starter   { background: #f9a825; color: #f9a825; }
+  .dot-l1        { background: #ef5350; color: #ef5350; }
+  .dot-l2        { background: #ff7043; color: #ff7043; }
+  .dot-l3        { background: #ab47bc; color: #ab47bc; }
+  .dot-l4        { background: #5c6bc0; color: #5c6bc0; }
+  .dot-l5        { background: #26a69a; color: #26a69a; }
+  .dot-l6        { background: #ec407a; color: #ec407a; }
+
 
   #card-list { position: absolute; left: 38px; bottom: 38px; width: 0; height: 0; }
   .pg-thumb-card { position: absolute; left: 0; bottom: 0; width: 76px; height: 57px; margin-left: -38px; margin-bottom: -28px; border-radius: 6px; background: var(--cat-bg); border: 2px solid var(--cat-border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, border-width 0.2s; }
@@ -594,11 +603,18 @@
   }
   #dial-arc-thumb:active { cursor: grabbing; }
 
-  /* 獨立定義轉盤縮圖上的顏色變數 */
-  .lv-green  { --cat-bg: rgba(76, 175, 80, 0.25);  --cat-border: #4caf50; }
-  .lv-yellow { --cat-bg: rgba(249, 168, 37, 0.25); --cat-border: #f9a825; }
-  .lv-red    { --cat-bg: rgba(239, 83, 80, 0.25);  --cat-border: #ef5350; }
-  .lv-purple { --cat-bg: rgba(171, 71, 188, 0.25); --cat-border: #ab47bc; }
+  /* 固定頁段顏色：封面與 Ending 為無色/中性 */
+  .lv-cover     { --cat-bg: rgba(255,255,255,0.10); --cat-border: rgba(255,255,255,0.42); }
+  .lv-ending    { --cat-bg: rgba(255,255,255,0.10); --cat-border: rgba(255,255,255,0.42); }
+  .lv-greetings { --cat-bg: rgba(38, 198, 218, 0.24); --cat-border: #26c6da; }
+  .lv-pre       { --cat-bg: rgba(76, 175, 80, 0.25); --cat-border: #4caf50; }
+  .lv-starter   { --cat-bg: rgba(249, 168, 37, 0.25); --cat-border: #f9a825; }
+  .lv-l1        { --cat-bg: rgba(239, 83, 80, 0.25); --cat-border: #ef5350; }
+  .lv-l2        { --cat-bg: rgba(255, 112, 67, 0.25); --cat-border: #ff7043; }
+  .lv-l3        { --cat-bg: rgba(171, 71, 188, 0.25); --cat-border: #ab47bc; }
+  .lv-l4        { --cat-bg: rgba(92, 107, 192, 0.25); --cat-border: #5c6bc0; }
+  .lv-l5        { --cat-bg: rgba(38, 166, 154, 0.25); --cat-border: #26a69a; }
+  .lv-l6        { --cat-bg: rgba(236, 64, 122, 0.25); --cat-border: #ec407a; }
 
   /* ══════════════════════════════════════
      BOTTOM BAR｜Full Glass Unified
@@ -817,11 +833,16 @@
             <input id="dial-page-input" type="number" min="1" value="1" onkeydown="handleDialPageKey(event)" onchange="goToDialPage(this.value)"/>
             <span id="dial-total-label">/ —</span>
           </div>
-          <div id="dial-level-dots" aria-label="Jump to level">
-            <button type="button" class="dial-level-dot dot-green" title="Pre-Starter" onclick="jumpToLevel('green')"></button>
-            <button type="button" class="dial-level-dot dot-yellow" title="Starter" onclick="jumpToLevel('yellow')"></button>
-            <button type="button" class="dial-level-dot dot-red" title="L1-L2" onclick="jumpToLevel('red')"></button>
-            <button type="button" class="dial-level-dot dot-purple" title="L3" onclick="jumpToLevel('purple')"></button>
+          <div id="dial-level-dots" aria-label="Jump to section">
+            <button type="button" class="dial-level-dot dot-greetings" title="Preview Greetings｜P2-P4" onclick="jumpToLevel('greetings')"></button>
+            <button type="button" class="dial-level-dot dot-pre" title="Preview Pre-Starter｜P5-P14" onclick="jumpToLevel('pre')"></button>
+            <button type="button" class="dial-level-dot dot-starter" title="Preview Starter｜P15-P17" onclick="jumpToLevel('starter')"></button>
+            <button type="button" class="dial-level-dot dot-l1" title="Preview L1｜P18-P20" onclick="jumpToLevel('l1')"></button>
+            <button type="button" class="dial-level-dot dot-l2" title="Preview L2｜P21-P23" onclick="jumpToLevel('l2')"></button>
+            <button type="button" class="dial-level-dot dot-l3" title="Preview L3｜P24-P26" onclick="jumpToLevel('l3')"></button>
+            <button type="button" class="dial-level-dot dot-l4" title="Preview L4｜P27-P29" onclick="jumpToLevel('l4')"></button>
+            <button type="button" class="dial-level-dot dot-l5" title="Preview L5｜P30-P32" onclick="jumpToLevel('l5')"></button>
+            <button type="button" class="dial-level-dot dot-l6" title="Preview L6｜P33-P35" onclick="jumpToLevel('l6')"></button>
           </div>
         </div>
         <div id="card-list"></div>
@@ -1127,18 +1148,35 @@ const DIAL_RADIUS = 210;
 
 // 定義顏色與背景，供 :root 連動使用
 const lvData = {
-  'green':  { name: 'Pre-Starter', hex: '#2e7d32', bg: 'rgba(76, 175, 80, 0.25)' },
-  'yellow': { name: 'Starter',     hex: '#f57f17', bg: 'rgba(249, 168, 37, 0.25)' },
-  'red':    { name: 'L1-L2',       hex: '#c62828', bg: 'rgba(239, 83, 80, 0.25)' },
-  'purple': { name: 'L3',          hex: '#6a1b9a', bg: 'rgba(171, 71, 188, 0.25)' } 
+  cover:     { name: 'Cover',       hex: '#d7dce8', bg: 'rgba(255,255,255,0.10)' },
+  greetings: { name: 'Greetings',   hex: '#00838f', bg: 'rgba(38, 198, 218, 0.24)' },
+  pre:       { name: 'Pre-Starter', hex: '#2e7d32', bg: 'rgba(76, 175, 80, 0.25)' },
+  starter:   { name: 'Starter',     hex: '#f57f17', bg: 'rgba(249, 168, 37, 0.25)' },
+  l1:        { name: 'L1',          hex: '#c62828', bg: 'rgba(239, 83, 80, 0.25)' },
+  l2:        { name: 'L2',          hex: '#e64a19', bg: 'rgba(255, 112, 67, 0.25)' },
+  l3:        { name: 'L3',          hex: '#6a1b9a', bg: 'rgba(171, 71, 188, 0.25)' },
+  l4:        { name: 'L4',          hex: '#3949ab', bg: 'rgba(92, 107, 192, 0.25)' },
+  l5:        { name: 'L5',          hex: '#00796b', bg: 'rgba(38, 166, 154, 0.25)' },
+  l6:        { name: 'L6',          hex: '#c2185b', bg: 'rgba(236, 64, 122, 0.25)' },
+  ending:    { name: 'Ending',      hex: '#d7dce8', bg: 'rgba(255,255,255,0.10)' }
 };
 
 function getLv(i, total) {
-  const ratio = i / total;
-  if (ratio < 0.28) return 'green';
-  if (ratio < 0.56) return 'yellow';
-  if (ratio < 0.84) return 'red';
-  return 'purple';
+  const page = i + 1;
+
+  if (page === 1) return 'cover';
+  if (page >= 2 && page <= 4) return 'greetings';
+  if (page >= 5 && page <= 14) return 'pre';
+  if (page >= 15 && page <= 17) return 'starter';
+  if (page >= 18 && page <= 20) return 'l1';
+  if (page >= 21 && page <= 23) return 'l2';
+  if (page >= 24 && page <= 26) return 'l3';
+  if (page >= 27 && page <= 29) return 'l4';
+  if (page >= 30 && page <= 32) return 'l5';
+  if (page >= 33 && page <= 35) return 'l6';
+  if (page === 36) return 'ending';
+
+  return 'ending';
 }
 
 function buildCatalog(total) {
@@ -1172,20 +1210,23 @@ function getFirstPageOfLevel(levelId) {
   return found ? found.num : 1;
 }
 
-async function jumpToLevel(levelId) {
+function jumpToLevel(levelId) {
   if (!pdfDoc || !catalogPages.length) return;
+
+  // 點選等級圓點時，只把轉盤移到該段落附近，先不要切換 PDF 主畫面。
+  // 老師可以先在轉盤附近找頁面，再點縮圖或按 Enter 正式切頁。
   const page = getFirstPageOfLevel(levelId);
-  await goToPage(page);
+  previewDialPage(page);
 }
 
 function updateCenterText(levelId) {
-  const info = lvData[levelId];
+  const info = lvData[levelId] || lvData.cover;
   const textEl = document.getElementById('dial-center-text');
   updateLevelDots(levelId);
   if (textEl.textContent !== info.name) {
     textEl.textContent = info.name;
     textEl.style.color = info.hex;
-
+    
     // 更新全域變數，左側 tool-hub 與右側 feature-hub 都會跟著變色！
     document.documentElement.style.setProperty('--theme-hex', info.hex);
     document.documentElement.style.setProperty('--theme-bg', info.bg);
