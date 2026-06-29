@@ -347,6 +347,125 @@
   .pg-thumb-card:hover { border-width: 3px; z-index: 20 !important; filter: brightness(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
   .pg-thumb-card.active { border-width: 3px; box-shadow: 0 0 16px var(--cat-border); filter: brightness(1.1); }
 
+  /* 轉盤底部輔助控制：沒有滑鼠滾輪時也能快速翻頁 */
+  #dial-controls {
+    position: absolute;
+    left: 68px;
+    bottom: 18px;
+    width: 220px;
+    min-height: 58px;
+    padding: 8px 10px;
+    border-radius: 16px;
+    background: rgba(18, 24, 38, 0.54);
+    border: 1px solid rgba(255,255,255,0.36);
+    box-shadow: 0 8px 26px rgba(0,0,0,0.20), inset 0 0 18px rgba(255,255,255,0.13);
+    backdrop-filter: blur(18px) saturate(145%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 40;
+  }
+  .dial-control-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #dial-slider {
+    flex: 1;
+    width: 100%;
+    height: 18px;
+    accent-color: var(--theme-hex);
+    cursor: pointer;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  #dial-slider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.30);
+  }
+  #dial-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: -6px;
+    border-radius: 50%;
+    background: var(--theme-hex);
+    border: 2px solid rgba(255,255,255,0.90);
+    box-shadow: 0 0 12px var(--theme-bg), 0 3px 10px rgba(0,0,0,0.22);
+  }
+  #dial-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.30);
+  }
+  #dial-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--theme-hex);
+    border: 2px solid rgba(255,255,255,0.90);
+    box-shadow: 0 0 12px var(--theme-bg), 0 3px 10px rgba(0,0,0,0.22);
+  }
+  .dial-jump-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dial-jump-label {
+    font-size: 10px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.82);
+    letter-spacing: 0.6px;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+  #dial-page-input {
+    width: 48px;
+    height: 26px;
+    border-radius: 9px;
+    border: 1px solid rgba(255,255,255,0.44);
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.10);
+  }
+  #dial-page-input:focus {
+    border-color: rgba(255,255,255,0.82);
+    box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 10px rgba(255,255,255,0.12);
+  }
+  #dial-total-label {
+    min-width: 34px;
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.70);
+  }
+  #dial-go-btn {
+    height: 26px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.52);
+    background: var(--theme-bg);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.32);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.12);
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  #dial-go-btn:hover {
+    transform: translateY(-1px);
+    background: var(--theme-hex);
+    border-color: rgba(255,255,255,0.86);
+  }
+
   /* 獨立定義轉盤縮圖上的顏色變數 */
   .lv-green  { --cat-bg: rgba(76, 175, 80, 0.25);  --cat-border: #4caf50; }
   .lv-yellow { --cat-bg: rgba(249, 168, 37, 0.25); --cat-border: #f9a825; }
@@ -551,6 +670,18 @@
         <div class="dial-track"></div>
         <div id="dial-center-info"><div id="dial-center-text">Loading...</div></div>
         <div id="card-list"></div>
+        <div id="dial-controls">
+          <div class="dial-control-top">
+            <span class="dial-jump-label">SLIDE</span>
+            <input id="dial-slider" type="range" min="1" max="1" value="1" oninput="previewDialPage(this.value)" onchange="goToDialPage(this.value)"/>
+          </div>
+          <div class="dial-jump-row">
+            <span class="dial-jump-label">PAGE</span>
+            <input id="dial-page-input" type="number" min="1" value="1" onkeydown="handleDialPageKey(event)" onchange="goToDialPage(this.value)"/>
+            <span id="dial-total-label">/ —</span>
+            <button id="dial-go-btn" type="button" onclick="goToDialPage(document.getElementById('dial-page-input').value)">GO</button>
+          </div>
+        </div>
       </div>
       <div id="cat-trigger"><i class="ti ti-layout-list"></i><span class="cat-label">MENU</span></div>
     </div>
@@ -666,6 +797,7 @@ function updateNav() {
   document.getElementById('page-input').max = total;
   document.getElementById('btn-prev').disabled = currentPage <= 1;
   document.getElementById('btn-next').disabled = currentPage >= total;
+  updateDialControls(currentPage, total);
   syncDialToPage(currentPage); 
 }
 
@@ -684,6 +816,46 @@ async function goToPage(n) {
   currentPage = n;
   await renderPage(currentPage);
   updateNav();
+}
+
+function clampPageNumber(n) {
+  const total = pdfDoc ? pdfDoc.numPages : 1;
+  return Math.max(1, Math.min(total, parseInt(n) || 1));
+}
+
+function updateDialControls(pageNum, total) {
+  const slider = document.getElementById('dial-slider');
+  const input = document.getElementById('dial-page-input');
+  const label = document.getElementById('dial-total-label');
+  if (!slider || !input || !label) return;
+  slider.max = Math.max(1, total || 1);
+  slider.value = Math.max(1, pageNum || 1);
+  input.max = Math.max(1, total || 1);
+  input.value = Math.max(1, pageNum || 1);
+  label.textContent = '/ ' + (total || '—');
+}
+
+// 滑桿拖曳時先預覽轉盤位置；放開滑桿後才真正跳頁，避免 PDF 連續重算造成卡頓。
+function previewDialPage(n) {
+  if (!pdfDoc) return;
+  n = clampPageNumber(n);
+  const input = document.getElementById('dial-page-input');
+  if (input) input.value = n;
+  syncDialToPage(n);
+}
+
+async function goToDialPage(n) {
+  if (!pdfDoc) return;
+  n = clampPageNumber(n);
+  updateDialControls(n, pdfDoc.numPages);
+  await goToPage(n);
+}
+
+function handleDialPageKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    goToDialPage(e.target.value);
+  }
 }
 
 function loadPDFFile(input) {
@@ -731,6 +903,7 @@ function buildCatalog(total) {
     div.innerHTML = `<canvas id="thumb-canvas-${i + 1}" class="thumb-canvas"></canvas><div class="thumb-badge">${i + 1}</div>`;
     list.appendChild(div);
   }
+  updateDialControls(1, total);
   syncDialToPage(1); 
   if (total > 0) setTimeout(renderAllThumbnails, 500);
 }
