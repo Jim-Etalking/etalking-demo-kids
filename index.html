@@ -905,13 +905,16 @@ document.addEventListener('keydown', e => {
   const params = new URLSearchParams(window.location.search);
   const pdfUrl = params.get('url');
   const pdfName = params.get('name');
+  
   if (pdfUrl) {
     if (pdfName) document.getElementById('doc-title').textContent = decodeURIComponent(pdfName);
     loadPDF(decodeURIComponent(pdfUrl));
   } else {
-    // 沒有網址參數 → 600ms 後自動跳出選檔視窗
-    document.getElementById('doc-title').textContent = '請選擇教材 PDF';
-    setTimeout(() => document.getElementById('file-input').click(), 600);
+    // 👇 修改這裡：換成你實際的 PDF 檔名
+    const defaultPdfPath = '424417-kids-2.0-demo_placement-202510.pdf'; 
+    
+    document.getElementById('doc-title').textContent = '載入預設教材中...';
+    loadPDF(defaultPdfPath);
   }
 })();
 
