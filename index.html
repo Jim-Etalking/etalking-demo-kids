@@ -773,19 +773,7 @@
   :fullscreen #canvas-wrapper,
   #app.mac-window-fullscreen #canvas-wrapper,
   :-webkit-full-screen #canvas-wrapper {
-    min-width: 100vw;
-    min-height: 100vh;
-    min-height: 100dvh;
     box-shadow: none;
-  }
-  :fullscreen #pdf-canvas,
-  #app.mac-window-fullscreen #pdf-canvas,
-  :-webkit-full-screen #pdf-canvas {
-    min-width: 100vw;
-    min-height: 100vh;
-    min-height: 100dvh;
-    object-fit: cover;
-    object-position: center center;
   }
 
 </style>
@@ -1023,19 +1011,14 @@ async function renderPage(num) {
   const isFullscreen = isPresentationMode();
   const areaSize = getPdfAreaSize(container, isFullscreen);
 
-  // 一般模式：完整顯示 PDF，不裁切。
-  // 全螢幕模式：用實際可見畫面滿版填滿，避免 macOS/Safari 的 100vh 誤差露出底色。
+  // 完整顯示 PDF，不裁切教材內容。
   const padding = isFullscreen ? 0 : 40;
   const maxWidth = Math.max(1, areaSize.width - padding);
   const maxHeight = Math.max(1, areaSize.height - padding);
 
   const vpUnscaled = page.getViewport({ scale: 1 });
   const fitScale = Math.min(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
-  const fillScale = Math.max(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
-  let scale = isFullscreen ? fillScale * 1.01 : fitScale;
-  if (isFullscreen && Math.ceil(vpUnscaled.height * scale) < maxHeight) {
-    scale = (maxHeight / vpUnscaled.height) * 1.01;
-  }
+  const scale = fitScale;
   const vp = page.getViewport({ scale: scale });
   
   canvas.width = Math.ceil(vp.width);
