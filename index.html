@@ -22,9 +22,9 @@
 
   /* ── Reset & Base ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #0f0f18; }
+  html, body { width: 100%; height: 100%; min-height: 100dvh; min-height: -webkit-fill-available; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #0f0f18; }
 
-  #app { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+  #app { display: flex; flex-direction: column; width: 100vw; height: 100vh; height: 100dvh; min-height: -webkit-fill-available; background: #0f0f18; }
 
   /* ══════════════════════════════════════
      TOP BAR｜Full Glass Unified
@@ -710,8 +710,12 @@
   /* ══════════════════════════════════════
      FULLSCREEN LOGIC
   ══════════════════════════════════════ */
-  :fullscreen #bottombar { display: none; }
-  :fullscreen #topbar { 
+  :fullscreen #bottombar,
+  #app.mac-window-fullscreen #bottombar,
+  :-webkit-full-screen #bottombar { display: none; }
+  :fullscreen #topbar,
+  #app.mac-window-fullscreen #topbar,
+  :-webkit-full-screen #topbar { 
     position: absolute;
     top: 16px;
     right: 16px;
@@ -726,19 +730,63 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  :fullscreen #topbar > *:not(#topbar-right) { display: none; }
-  :fullscreen #topbar-right { pointer-events: auto; }
-  :fullscreen #timer-display {
+  :fullscreen #topbar > *:not(#topbar-right),
+  #app.mac-window-fullscreen #topbar > *:not(#topbar-right),
+  :-webkit-full-screen #topbar > *:not(#topbar-right) { display: none; }
+  :fullscreen #topbar-right,
+  #app.mac-window-fullscreen #topbar-right,
+  :-webkit-full-screen #topbar-right { pointer-events: auto; }
+  :fullscreen #timer-display,
+  #app.mac-window-fullscreen #timer-display,
+  :-webkit-full-screen #timer-display {
     background: rgba(18,24,38,0.58);
     backdrop-filter: blur(18px) saturate(150%);
     -webkit-backdrop-filter: blur(18px) saturate(150%);
     border-color: rgba(255,255,255,0.42);
     box-shadow: 0 6px 22px rgba(0,0,0,0.38), inset 0 0 14px rgba(255,255,255,0.12);
   }
-  :fullscreen #app { background: #000; }
+  #app:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+    background: #0f0f18;
+  }
+  #app.mac-window-fullscreen {
+    height: 100vh;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
+  #app:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+    background: #0f0f18;
+  }
   :fullscreen #main,
-  :fullscreen #pdf-area { background: #000; }
-  :fullscreen #canvas-wrapper { box-shadow: none; }
+  :fullscreen #pdf-area,
+  #app.mac-window-fullscreen #main,
+  #app.mac-window-fullscreen #pdf-area,
+  :-webkit-full-screen #main,
+  :-webkit-full-screen #pdf-area { background: #0f0f18; }
+  :fullscreen #canvas-wrapper,
+  #app.mac-window-fullscreen #canvas-wrapper,
+  :-webkit-full-screen #canvas-wrapper {
+    min-width: 100vw;
+    min-height: 100vh;
+    min-height: 100dvh;
+    box-shadow: none;
+  }
+  :fullscreen #pdf-canvas,
+  #app.mac-window-fullscreen #pdf-canvas,
+  :-webkit-full-screen #pdf-canvas {
+    min-width: 100vw;
+    min-height: 100vh;
+    min-height: 100dvh;
+    object-fit: cover;
+    object-position: center center;
+  }
 
 </style>
 </head>
@@ -898,6 +946,36 @@ const wrapper = document.getElementById('canvas-wrapper');
 
 function showLoading(show) { document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none'; }
 
+function getFullscreenElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+
+function isMacWindowFullscreen() {
+  if (getFullscreenElement()) return false;
+  const platform = navigator.userAgentData?.platform || navigator.platform || '';
+  const isMac = /Mac|iPad|iPhone/.test(platform);
+  if (!isMac || !window.screen) return false;
+
+  const widthGap = Math.min(
+    Math.abs(window.screen.width - window.innerWidth),
+    Math.abs((window.screen.availWidth || window.screen.width) - window.innerWidth)
+  );
+  const heightGap = Math.min(
+    Math.abs(window.screen.height - window.innerHeight),
+    Math.abs((window.screen.availHeight || window.screen.height) - window.innerHeight)
+  );
+
+  return window.innerWidth >= 900 && window.innerHeight >= 650 && widthGap <= 160 && heightGap <= 260;
+}
+
+function isPresentationMode() {
+  return !!getFullscreenElement() || isMacWindowFullscreen();
+}
+
+function updateAppModeClass() {
+  document.getElementById('app').classList.toggle('mac-window-fullscreen', isMacWindowFullscreen());
+}
+
 async function loadPDF(src) {
   showLoading(true);
   document.getElementById('drop-hint').style.display = 'none';
@@ -917,31 +995,53 @@ async function loadPDF(src) {
   showLoading(false);
 }
 
+function getPdfAreaSize(container, isFullscreen) {
+  if (!isFullscreen) {
+    return {
+      width: container.clientWidth,
+      height: container.clientHeight
+    };
+  }
+
+  const fullscreenRect = getFullscreenElement()?.getBoundingClientRect();
+  const visualViewport = window.visualViewport;
+
+  return {
+    width: Math.round(fullscreenRect?.width || visualViewport?.width || window.innerWidth || container.clientWidth),
+    height: Math.round(fullscreenRect?.height || visualViewport?.height || window.innerHeight || container.clientHeight)
+  };
+}
+
 // 自動最佳化版面大小
 async function renderPage(num) {
   if (!pdfDoc) return;
   if (renderTask) { renderTask.cancel(); }
   const page = await pdfDoc.getPage(num);
   
+  updateAppModeClass();
   const container = document.getElementById('pdf-area');
-  const isFullscreen = !!document.fullscreenElement;
+  const isFullscreen = isPresentationMode();
+  const areaSize = getPdfAreaSize(container, isFullscreen);
 
   // 一般模式：完整顯示 PDF，不裁切。
-  // 全螢幕模式：自動滿版填滿畫面，讓黑邊消失；多出的部分由 #pdf-area overflow:hidden 裁掉。
+  // 全螢幕模式：用實際可見畫面滿版填滿，避免 macOS/Safari 的 100vh 誤差露出底色。
   const padding = isFullscreen ? 0 : 40;
-  const maxWidth = Math.max(1, container.clientWidth - padding);
-  const maxHeight = Math.max(1, container.clientHeight - padding);
+  const maxWidth = Math.max(1, areaSize.width - padding);
+  const maxHeight = Math.max(1, areaSize.height - padding);
 
   const vpUnscaled = page.getViewport({ scale: 1 });
   const fitScale = Math.min(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
   const fillScale = Math.max(maxWidth / vpUnscaled.width, maxHeight / vpUnscaled.height);
-  const scale = isFullscreen ? fillScale : fitScale;
+  let scale = isFullscreen ? fillScale * 1.01 : fitScale;
+  if (isFullscreen && Math.ceil(vpUnscaled.height * scale) < maxHeight) {
+    scale = (maxHeight / vpUnscaled.height) * 1.01;
+  }
   const vp = page.getViewport({ scale: scale });
   
-  canvas.width = vp.width; 
-  canvas.height = vp.height;
-  wrapper.style.width = vp.width + 'px';
-  wrapper.style.height = vp.height + 'px';
+  canvas.width = Math.ceil(vp.width);
+  canvas.height = Math.ceil(vp.height);
+  wrapper.style.width = canvas.width + 'px';
+  wrapper.style.height = canvas.height + 'px';
 
   renderTask = page.render({ canvasContext: ctx, viewport: vp });
   try { await renderTask.promise; } catch(e) { }
@@ -952,12 +1052,19 @@ async function renderPage(num) {
 
 let resizeTimer;
 window.addEventListener('resize', () => {
+  updateAppModeClass();
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => { if (pdfDoc) renderPage(currentPage); }, 300);
 });
 
 // 進出全螢幕後重新計算比例：一般模式 contain，全螢幕 cover。
 document.addEventListener('fullscreenchange', () => {
+  updateAppModeClass();
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { if (pdfDoc) renderPage(currentPage); }, 150);
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  updateAppModeClass();
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => { if (pdfDoc) renderPage(currentPage); }, 150);
 });
@@ -1625,8 +1732,14 @@ document.addEventListener('keydown', e => {
 });
 
 function toggleFullscreen() {
-  if (!document.fullscreenElement) document.getElementById('app').requestFullscreen();
-  else document.exitFullscreen();
+  const app = document.getElementById('app');
+  if (!getFullscreenElement()) {
+    if (app.requestFullscreen) app.requestFullscreen();
+    else if (app.webkitRequestFullscreen) app.webkitRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
 }
 
 initDialArcUI();
