@@ -712,9 +712,11 @@
      FULLSCREEN LOGIC
   ══════════════════════════════════════ */
   :fullscreen #bottombar,
+  #app.presentation-window #bottombar,
   #app.mac-window-fullscreen #bottombar,
   :-webkit-full-screen #bottombar { display: none; }
   :fullscreen #topbar,
+  #app.presentation-window #topbar,
   #app.mac-window-fullscreen #topbar,
   :-webkit-full-screen #topbar { 
     position: absolute;
@@ -732,12 +734,15 @@
     -webkit-backdrop-filter: none;
   }
   :fullscreen #topbar > *:not(#topbar-right),
+  #app.presentation-window #topbar > *:not(#topbar-right),
   #app.mac-window-fullscreen #topbar > *:not(#topbar-right),
   :-webkit-full-screen #topbar > *:not(#topbar-right) { display: none; }
   :fullscreen #topbar-right,
+  #app.presentation-window #topbar-right,
   #app.mac-window-fullscreen #topbar-right,
   :-webkit-full-screen #topbar-right { pointer-events: auto; }
   :fullscreen #timer-display,
+  #app.presentation-window #timer-display,
   #app.mac-window-fullscreen #timer-display,
   :-webkit-full-screen #timer-display {
     background: rgba(18,24,38,0.58);
@@ -758,6 +763,11 @@
     height: 100dvh;
     min-height: -webkit-fill-available;
   }
+  #app.presentation-window {
+    height: 100vh;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
   #app:-webkit-full-screen {
     width: 100vw;
     height: 100vh;
@@ -767,11 +777,14 @@
   }
   :fullscreen #main,
   :fullscreen #pdf-area,
+  #app.presentation-window #main,
+  #app.presentation-window #pdf-area,
   #app.mac-window-fullscreen #main,
   #app.mac-window-fullscreen #pdf-area,
   :-webkit-full-screen #main,
   :-webkit-full-screen #pdf-area { background: #0f0f18; }
   :fullscreen #canvas-wrapper,
+  #app.presentation-window #canvas-wrapper,
   #app.mac-window-fullscreen #canvas-wrapper,
   :-webkit-full-screen #canvas-wrapper {
     box-shadow: none;
@@ -945,7 +958,7 @@ function getFullscreenElement() {
 function isMacWindowFullscreen() {
   if (getFullscreenElement()) return false;
   const platform = navigator.userAgentData?.platform || navigator.platform || '';
-  const isMac = /Mac|iPad|iPhone/.test(platform);
+  const isMac = /mac|ipad|iphone/i.test(platform);
   if (!isMac || !window.screen) return false;
 
   const widthGap = Math.min(
@@ -965,7 +978,10 @@ function isPresentationMode() {
 }
 
 function updateAppModeClass() {
-  document.getElementById('app').classList.toggle('mac-window-fullscreen', isMacWindowFullscreen());
+  const app = document.getElementById('app');
+  const macWindowFullscreen = isMacWindowFullscreen();
+  app.classList.toggle('mac-window-fullscreen', macWindowFullscreen);
+  app.classList.toggle('presentation-window', !!getFullscreenElement() || macWindowFullscreen);
 }
 
 async function loadPDF(src) {
@@ -1034,7 +1050,8 @@ async function renderPage(num) {
   renderTask = page.render({ canvasContext: ctx, viewport: vp });
   try { await renderTask.promise; } catch(e) { }
 
-  if (isFullscreen) {
+  const hasLetterbox = canvas.width < areaSize.width - 2 || canvas.height < areaSize.height - 2;
+  if (isFullscreen || hasLetterbox) {
     const bgScale = Math.max(areaSize.width / vpUnscaled.width, areaSize.height / vpUnscaled.height) * 1.02;
     const bgVp = page.getViewport({ scale: bgScale });
     bgCanvas.width = Math.ceil(bgVp.width);
