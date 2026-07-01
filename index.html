@@ -449,17 +449,18 @@
   }
   .sound-drawer {
     width: 100%;
-    display: grid;
-    grid-template-rows: 0fr;
+    max-height: 0;
+    overflow: hidden;
     opacity: 0;
-    transition: grid-template-rows 0.22s ease, opacity 0.18s ease;
+    pointer-events: none;
+    transition: max-height 0.22s ease, opacity 0.18s ease;
   }
   .sound-drawer.show {
-    grid-template-rows: 1fr;
+    max-height: 52px;
     opacity: 1;
+    pointer-events: auto;
   }
   .sound-drawer-inner {
-    overflow: hidden;
     min-height: 0;
     display: flex;
     align-items: center;
