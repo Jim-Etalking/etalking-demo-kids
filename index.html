@@ -432,26 +432,39 @@
   .fab-btn:hover { transform: translateX(-5px); background: var(--theme-bg); box-shadow: 0 0 0 2px rgba(255,255,255,0.18), 0 6px 18px rgba(0,0,0,0.28), inset 0 0 14px rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.9); }
   .fab-btn.active { background: var(--theme-hex); color: #fff; border-color: var(--theme-hex); box-shadow: 0 0 16px var(--theme-hex); }
   .fab-btn i { font-size: 16px; }
+  .sound-control-group {
+    width: 168px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    transition: gap 0.2s ease;
+  }
+  .sound-control-group .fab-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .sound-control-group.open {
+    gap: 6px;
+  }
   .sound-drawer {
     width: 100%;
     display: grid;
     grid-template-rows: 0fr;
     opacity: 0;
-    margin-top: -10px;
-    transition: grid-template-rows 0.22s ease, opacity 0.18s ease, margin 0.2s ease;
+    transition: grid-template-rows 0.22s ease, opacity 0.18s ease;
   }
   .sound-drawer.show {
     grid-template-rows: 1fr;
     opacity: 1;
-    margin-top: -4px;
   }
   .sound-drawer-inner {
     overflow: hidden;
     min-height: 0;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 9px;
+    gap: 6px;
+    padding: 8px;
     border-radius: 12px;
     background: rgba(255,255,255,0.10);
     border: 1px solid rgba(255,255,255,0.26);
@@ -463,17 +476,20 @@
   }
   .sound-slider {
     flex: 1;
-    min-width: 92px;
+    min-width: 0;
     accent-color: var(--theme-hex);
   }
   .sound-volume-label {
-    min-width: 34px;
+    flex: 0 0 38px;
+    min-width: 38px;
     text-align: right;
     color: rgba(255,255,255,0.84);
     font-size: 11px;
     font-weight: 900;
+    font-variant-numeric: tabular-nums;
   }
   .sound-test-btn {
+    flex: 0 0 27px;
     width: 27px;
     height: 27px;
     border-radius: 50%;
@@ -1300,17 +1316,19 @@
     <div id="feature-hub">
       <div id="feature-edge"><i class="ti ti-chevron-left"></i></div>
       <div id="feature-panel">
-        <button class="fab-btn" id="fab-sound" onclick="toggleFab('sound')">
-          <i class="ti ti-volume"></i> Sound Effects
-        </button>
-        <div class="sound-drawer" id="sound-drawer">
-          <div class="sound-drawer-inner">
-            <i class="ti ti-volume-2"></i>
-            <input class="sound-slider" id="sfx-volume" type="range" min="0" max="100" value="70" oninput="setSfxVolume(this.value)">
-            <span class="sound-volume-label" id="sfx-volume-label">70%</span>
-            <button class="sound-test-btn" onclick="event.stopPropagation(); playSfx('star')" title="Test sound">
-              <i class="ti ti-player-play"></i>
-            </button>
+        <div class="sound-control-group" id="sound-control-group">
+          <button class="fab-btn" id="fab-sound" onclick="toggleFab('sound')">
+            <i class="ti ti-volume"></i> Sound Effects
+          </button>
+          <div class="sound-drawer" id="sound-drawer">
+            <div class="sound-drawer-inner">
+              <i class="ti ti-volume-2"></i>
+              <input class="sound-slider" id="sfx-volume" type="range" min="0" max="100" value="70" oninput="setSfxVolume(this.value)">
+              <span class="sound-volume-label" id="sfx-volume-label">70%</span>
+              <button class="sound-test-btn" onclick="event.stopPropagation(); playSfx('star')" title="Test sound">
+                <i class="ti ti-player-play"></i>
+              </button>
+            </div>
           </div>
         </div>
         <button class="fab-btn" id="fab-interact" onclick="toggleFab('interact')">
@@ -2199,7 +2217,9 @@ function updateFeatureUI() {
     if (popover) popover.classList.toggle('show', isActive);
   });
   const soundDrawer = document.getElementById('sound-drawer');
+  const soundGroup = document.getElementById('sound-control-group');
   if (soundDrawer) soundDrawer.classList.toggle('show', featureState.soundOpen);
+  if (soundGroup) soundGroup.classList.toggle('open', featureState.soundOpen);
   renderStudentFeatureLists();
 }
 
