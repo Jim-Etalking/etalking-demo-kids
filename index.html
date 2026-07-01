@@ -433,6 +433,165 @@
   .fab-btn.active { background: var(--theme-hex); color: #fff; border-color: var(--theme-hex); box-shadow: 0 0 16px var(--theme-hex); }
   .fab-btn i { font-size: 16px; }
 
+  .feature-popover {
+    position: absolute;
+    right: 162px;
+    top: 50%;
+    transform: translateY(-50%) translateX(12px);
+    width: min(280px, calc(100vw - 190px));
+    max-height: min(520px, calc(100vh - 34px));
+    overflow: auto;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    color: #fff;
+    background: rgba(18, 24, 38, 0.82);
+    border: 1px solid rgba(255,255,255,0.42);
+    border-radius: 14px;
+    box-shadow: -8px 12px 42px rgba(0,0,0,0.40), inset 0 0 24px rgba(255,255,255,0.10);
+    backdrop-filter: blur(26px) saturate(150%);
+    -webkit-backdrop-filter: blur(26px) saturate(150%);
+    z-index: 260;
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .feature-popover.show {
+    display: flex;
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+  .feature-popover-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.22);
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .feature-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+    cursor: pointer;
+  }
+  .feature-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 36px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .feature-range {
+    width: 132px;
+    accent-color: var(--theme-hex);
+  }
+  .feature-action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .feature-action {
+    min-height: 58px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.34);
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 900;
+    box-shadow: inset 0 0 12px rgba(255,255,255,0.08);
+  }
+  .feature-action:hover {
+    background: var(--theme-bg);
+    border-color: rgba(255,255,255,0.72);
+  }
+  .feature-action i { font-size: 22px; }
+  .feature-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .feature-number {
+    width: 48px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.34);
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    text-align: center;
+    font-weight: 900;
+  }
+  .student-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .student-card {
+    border: 1px solid rgba(255,255,255,0.24);
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+    border-radius: 10px;
+    padding: 9px 10px;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+  }
+  .student-card:hover { background: var(--theme-bg); border-color: rgba(255,255,255,0.68); }
+  .student-name { font-size: 12px; font-weight: 900; }
+  .student-stats { display: flex; gap: 6px; }
+  #keyboard-panel {
+    position: absolute;
+    left: 50%;
+    bottom: 58px;
+    transform: translateX(-50%);
+    width: min(720px, calc(100vw - 32px));
+    display: none;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+    padding: 12px;
+    background: rgba(18, 24, 38, 0.82);
+    border: 1px solid rgba(255,255,255,0.38);
+    border-radius: 14px;
+    box-shadow: 0 -8px 36px rgba(0,0,0,0.36), inset 0 0 22px rgba(255,255,255,0.10);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    z-index: 255;
+  }
+  #keyboard-panel.show { display: grid; }
+  .key-btn {
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.30);
+    background: rgba(255,255,255,0.13);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .key-btn:hover { background: var(--theme-bg); }
+
   /* ══════════════════════════════════════
      LEFT-BOTTOM: 1/4 CIRCLE DIAL (左下轉盤目錄)
   ══════════════════════════════════════ */
@@ -924,6 +1083,66 @@
         </button>
       </div>
     </div>
+
+    <div class="feature-popover" id="feature-popover-sound" aria-live="polite">
+      <div class="feature-popover-header">
+        <span><i class="ti ti-volume"></i> Sound Effects</span>
+        <button class="feature-close" onclick="closeFeaturePopovers()" title="Close"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="feature-row">
+        <span>Volume</span>
+        <input class="feature-range" id="sfx-volume" type="range" min="0" max="100" value="70" oninput="setSfxVolume(this.value)">
+        <span id="sfx-volume-label">70%</span>
+      </div>
+      <button class="feature-action" onclick="playSfx('success')" style="min-height:48px;">
+        <i class="ti ti-player-play"></i>
+        <span>Test Sound</span>
+      </button>
+    </div>
+
+    <div class="feature-popover" id="feature-popover-interact" aria-live="polite">
+      <div class="feature-popover-header">
+        <span><i class="ti ti-device-gamepad-2"></i> Interactive</span>
+        <button class="feature-close" onclick="closeFeaturePopovers()" title="Close"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="feature-row">
+        <span class="feature-pill"><i class="ti ti-star"></i> <span id="total-stars">0</span></span>
+        <span class="feature-pill"><i class="ti ti-coin"></i> <span id="total-coins">0</span></span>
+      </div>
+      <div class="feature-action-grid">
+        <button class="feature-action" onclick="awardSelected('star')">
+          <i class="ti ti-star"></i>
+          <span>Star</span>
+        </button>
+        <button class="feature-action" onclick="awardSelected('coin')">
+          <i class="ti ti-coin"></i>
+          <span>Coin</span>
+        </button>
+        <button class="feature-action" onclick="rollDice()">
+          <i class="ti ti-dice"></i>
+          <span>Dice <strong id="dice-result">-</strong></span>
+        </button>
+        <button class="feature-action" onclick="toggleKeyboardPanel()">
+          <i class="ti ti-keyboard"></i>
+          <span>Keyboard</span>
+        </button>
+      </div>
+      <div class="feature-row">
+        <span>Dice Max</span>
+        <input class="feature-number" id="dice-max" type="number" min="1" max="9" value="6" onchange="setDiceMax(this.value)">
+      </div>
+      <div class="student-list" id="interact-student-list"></div>
+    </div>
+
+    <div class="feature-popover" id="feature-popover-summary" aria-live="polite">
+      <div class="feature-popover-header">
+        <span><i class="ti ti-chart-bar"></i> Summary</span>
+        <button class="feature-close" onclick="closeFeaturePopovers()" title="Close"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="student-list" id="summary-student-list"></div>
+    </div>
+
+    <div id="keyboard-panel" aria-label="On-screen keyboard"></div>
 
   </div>
 
@@ -1718,11 +1937,155 @@ updateShapeOptionActive('rect');
 /* ═══════════════════════════════════════════════════
    MISC
 ═══════════════════════════════════════════════════ */
-const fabState = { sound: false, interact: false, summary: false };
+const demoStudents = [
+  { id: 'amy', firstName: 'Amy', lastName: 'Chen' },
+  { id: 'ben', firstName: 'Ben', lastName: 'Wang' },
+  { id: 'coco', firstName: 'Coco', lastName: 'Lin' }
+];
+const featureState = {
+  active: null,
+  selectedStudentId: demoStudents[0].id,
+  sfxVolume: 70,
+  diceMax: 6,
+  stars: Object.fromEntries(demoStudents.map(student => [student.id, 0])),
+  coins: Object.fromEntries(demoStudents.map(student => [student.id, 0]))
+};
+let audioCtx = null;
+
 function toggleFab(name) {
-  fabState[name] = !fabState[name];
-  document.getElementById('fab-' + name).classList.toggle('active', fabState[name]);
-  if(fabState[name]) { setTimeout(() => { fabState[name]=false; document.getElementById('fab-'+name).classList.remove('active'); }, 2000); }
+  featureState.active = featureState.active === name ? null : name;
+  updateFeatureUI();
+}
+
+function closeFeaturePopovers() {
+  featureState.active = null;
+  updateFeatureUI();
+}
+
+function updateFeatureUI() {
+  ['sound', 'interact', 'summary'].forEach(name => {
+    const isActive = featureState.active === name;
+    const btn = document.getElementById('fab-' + name);
+    const popover = document.getElementById('feature-popover-' + name);
+    if (btn) btn.classList.toggle('active', isActive);
+    if (popover) popover.classList.toggle('show', isActive);
+  });
+  renderStudentFeatureLists();
+}
+
+function getTotalScores(type) {
+  const values = Object.values(type === 'star' ? featureState.stars : featureState.coins);
+  return values.reduce((sum, value) => sum + value, 0);
+}
+
+function renderStudentFeatureLists() {
+  const interactList = document.getElementById('interact-student-list');
+  const summaryList = document.getElementById('summary-student-list');
+  const totalStars = document.getElementById('total-stars');
+  const totalCoins = document.getElementById('total-coins');
+  if (totalStars) totalStars.textContent = getTotalScores('star');
+  if (totalCoins) totalCoins.textContent = getTotalScores('coin');
+
+  if (interactList) {
+    interactList.innerHTML = demoStudents.map(student => {
+      const selected = student.id === featureState.selectedStudentId;
+      return `
+        <button class="student-card" onclick="selectFeatureStudent('${student.id}')" style="${selected ? 'border-color: rgba(255,255,255,0.86); background: var(--theme-bg);' : ''}">
+          <span class="student-name">${student.firstName} ${student.lastName}</span>
+          <span class="student-stats">
+            <span><i class="ti ti-star"></i> ${featureState.stars[student.id] || 0}</span>
+            <span><i class="ti ti-coin"></i> ${featureState.coins[student.id] || 0}</span>
+          </span>
+        </button>`;
+    }).join('');
+  }
+
+  if (summaryList) {
+    summaryList.innerHTML = demoStudents.map(student => `
+      <button class="student-card" onclick="selectFeatureStudent('${student.id}'); toggleFab('interact')">
+        <span class="student-name">${student.firstName} ${student.lastName}</span>
+        <span class="student-stats">
+          <span><i class="ti ti-star"></i> ${featureState.stars[student.id] || 0}</span>
+          <span><i class="ti ti-coin"></i> ${featureState.coins[student.id] || 0}</span>
+        </span>
+      </button>`).join('');
+  }
+}
+
+function selectFeatureStudent(studentId) {
+  if (!featureState.stars.hasOwnProperty(studentId)) return;
+  featureState.selectedStudentId = studentId;
+  renderStudentFeatureLists();
+}
+
+function awardSelected(type) {
+  const bucket = type === 'star' ? featureState.stars : featureState.coins;
+  bucket[featureState.selectedStudentId] = (bucket[featureState.selectedStudentId] || 0) + 1;
+  playSfx(type === 'star' ? 'success' : 'coin');
+  renderStudentFeatureLists();
+}
+
+function setDiceMax(value) {
+  const parsed = parseInt(value, 10);
+  featureState.diceMax = Math.max(1, Math.min(9, Number.isNaN(parsed) ? 6 : parsed));
+  const input = document.getElementById('dice-max');
+  if (input) input.value = featureState.diceMax;
+}
+
+function rollDice() {
+  setDiceMax(document.getElementById('dice-max')?.value || featureState.diceMax);
+  const result = Math.floor(Math.random() * featureState.diceMax) + 1;
+  const label = document.getElementById('dice-result');
+  if (label) label.textContent = result;
+  playSfx('dice');
+}
+
+function setSfxVolume(value) {
+  const parsed = parseInt(value, 10);
+  featureState.sfxVolume = Math.max(0, Math.min(100, Number.isNaN(parsed) ? 70 : parsed));
+  const label = document.getElementById('sfx-volume-label');
+  if (label) label.textContent = featureState.sfxVolume + '%';
+}
+
+function playSfx(type) {
+  if (featureState.sfxVolume <= 0) return;
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const now = audioCtx.currentTime;
+  const volume = featureState.sfxVolume / 100;
+  const tone = type === 'dice' ? 220 : type === 'coin' ? 760 : 520;
+  osc.type = type === 'dice' ? 'square' : 'sine';
+  osc.frequency.setValueAtTime(tone, now);
+  osc.frequency.exponentialRampToValueAtTime(tone * 1.4, now + 0.12);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.18 * volume, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.2);
+}
+
+function toggleKeyboardPanel() {
+  const panel = document.getElementById('keyboard-panel');
+  if (!panel) return;
+  panel.classList.toggle('show');
+}
+
+function initKeyboardPanel() {
+  const panel = document.getElementById('keyboard-panel');
+  if (!panel) return;
+  const keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  panel.innerHTML = keys.map(key => `<button class="key-btn" onclick="insertKeyboardLetter('${key}')">${key}</button>`).join('');
+}
+
+function insertKeyboardLetter(letter) {
+  if (activeTextInput) {
+    activeTextInput.value += letter;
+    activeTextInput.focus();
+    return;
+  }
+  setTool('text');
 }
 
 let timerSec = 0;
@@ -1763,6 +2126,8 @@ function toggleFullscreen() {
   }
 }
 
+initKeyboardPanel();
+updateFeatureUI();
 initDialArcUI();
 
 (function() {
