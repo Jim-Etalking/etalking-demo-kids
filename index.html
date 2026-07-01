@@ -592,187 +592,159 @@
   }
   .key-btn:hover { background: var(--theme-bg); }
   .interactive-popover {
-    width: 320px;
-    max-width: calc(100vw - 190px);
-    padding: 16px;
-    background: #fff;
-    color: #111;
-    border: 3px solid #0d6efd;
-    border-right-width: 0;
-    border-radius: 16px 0 0 16px;
-    box-shadow: -6px 10px 34px rgba(0,0,0,0.28);
+    right: 154px;
+    width: 248px;
+    max-width: calc(100vw - 174px);
+    padding: 12px;
+    background: rgba(18, 24, 38, 0.82);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.42);
+    border-radius: 14px;
+    box-shadow: -8px 12px 40px rgba(0,0,0,0.36), inset 0 0 22px rgba(255,255,255,0.10);
+    backdrop-filter: blur(26px) saturate(150%);
+    -webkit-backdrop-filter: blur(26px) saturate(150%);
   }
   .interactive-popover .feature-popover-header {
-    color: #222;
-    border-bottom: 3px solid #0d6efd;
-    padding-bottom: 12px;
-    font-size: 27px;
+    color: #fff;
+    border-bottom: 2px solid var(--theme-hex);
+    padding-bottom: 9px;
+    font-size: 18px;
     justify-content: flex-start;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.32);
   }
-  .interactive-popover .feature-close { margin-left: auto; color: #111; border-color: #ccc; background: #f6f6f6; }
+  .interactive-popover .feature-close { margin-left: auto; }
   .interactive-panel-list {
     display: flex;
     flex-direction: column;
-    gap: 13px;
-    margin-top: 8px;
+    gap: 8px;
+    margin-top: 2px;
   }
   .interactive-row {
-    min-height: 83px;
-    border: 2px solid #c9c9c9;
-    border-radius: 7px;
-    background: #fff;
-    color: #111;
+    min-height: 58px;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 9px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
     display: grid;
-    grid-template-columns: 78px 1fr;
+    grid-template-columns: 50px 1fr;
     align-items: center;
-    gap: 10px;
-    padding: 10px 17px;
+    gap: 8px;
+    padding: 7px 11px;
     cursor: pointer;
-    transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+    box-shadow: inset 0 0 12px rgba(255,255,255,0.08);
+    transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
   }
   .interactive-row:hover {
-    border-color: #0d6efd;
+    border-color: rgba(255,255,255,0.78);
+    background: var(--theme-bg);
     transform: translateX(-2px);
-    box-shadow: 0 5px 14px rgba(13,110,253,0.14);
+    box-shadow: 0 5px 16px rgba(0,0,0,0.22), inset 0 0 14px rgba(255,255,255,0.12);
   }
   .interactive-row-value {
     justify-self: end;
-    font-size: 26px;
+    font-size: 19px;
     font-weight: 900;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.38);
   }
   .interactive-row-label {
     justify-self: end;
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 900;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.38);
   }
   .interactive-dice-input {
     justify-self: end;
-    width: 92px;
-    height: 41px;
-    border: 2px solid #d0d0d0;
-    border-radius: 4px;
-    color: #111;
-    background: #fff;
+    width: 58px;
+    height: 31px;
+    border: 1.5px solid rgba(255,255,255,0.34);
+    border-radius: 8px;
+    color: #fff;
+    background: rgba(255,255,255,0.14);
     text-align: center;
-    font-size: 22px;
-    font-weight: 700;
-  }
-  .interactive-icon {
-    width: 51px;
-    height: 51px;
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--icon-color);
-    font-size: 28px;
     font-weight: 900;
-    line-height: 1;
+    font-size: 16px;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.08);
   }
-  .interactive-icon::before,
-  .interactive-icon::after {
-    content: '';
-    position: absolute;
-    border: 3px solid currentColor;
-    border-radius: 50%;
+  .interactive-dice-input:focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.86);
+    box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 10px rgba(255,255,255,0.08);
   }
-  .interactive-icon::before {
-    inset: 7px;
-  }
-  .interactive-icon::after {
-    width: 34px;
-    height: 34px;
-    transform: rotate(-24deg);
-    border-left-color: transparent;
-  }
-  .interactive-icon span {
-    position: relative;
-    z-index: 1;
-    transform: translateY(1px);
+  .interactive-icon-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 7px rgba(0,0,0,0.28));
   }
   #reward-animation-layer {
-    position: absolute;
+    position: fixed;
     inset: 0;
     pointer-events: none;
     overflow: hidden;
-    z-index: 245;
+    z-index: 1000;
   }
-  .reward-burst {
-    position: absolute;
-    left: 50%;
-    top: 42%;
-    transform: translate(-50%, -50%);
-    width: 180px;
-    height: 180px;
-  }
-  .reward-token {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 54px;
-    height: 54px;
-    margin-left: -27px;
-    margin-top: -27px;
-    border-radius: 50%;
+  .coin-container,
+  .star-container,
+  .dice-container {
+    position: fixed;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-size: 29px;
-    font-weight: 900;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.18);
-    box-shadow: 0 7px 18px rgba(0,0,0,0.18), inset 0 0 0 4px rgba(255,255,255,0.38);
-    animation: rewardFly 1.25s cubic-bezier(.16,.8,.28,1) forwards;
-    animation-delay: var(--delay, 0ms);
+    pointer-events: none;
   }
-  .reward-token.coin { background: #ff8a3d; }
-  .reward-token.star {
-    background: #df4561;
-    clip-path: polygon(50% 0%, 62% 33%, 98% 35%, 69% 56%, 79% 91%, 50% 70%, 21% 91%, 31% 56%, 2% 35%, 38% 33%);
-    border-radius: 0;
+  .star-container {
+    display: block;
   }
-  .reward-dice {
+  .falling-coin,
+  .star,
+  .dice {
+    width: 30vmin;
+    height: 30vmin;
+    max-width: 300px;
+    max-height: 300px;
+  }
+  .falling-coin {
+    animation: fallDown 1s ease-out;
+  }
+  .star {
     position: absolute;
-    left: 50%;
-    top: 42%;
-    width: 116px;
-    height: 116px;
-    margin-left: -58px;
-    margin-top: -58px;
-    border-radius: 20px;
-    background: #fff;
-    border: 5px solid #2368c4;
-    box-shadow: 0 14px 34px rgba(0,0,0,0.30);
-    display: grid;
-    place-items: center;
-    color: #2368c4;
-    font-size: 54px;
-    font-weight: 900;
-    animation: diceRoll 2s ease-in-out forwards;
+    animation: flyFromTopLeft 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    opacity: 0;
   }
-  .reward-dice.final {
-    animation: dicePop 1.8s ease forwards;
+  .dice {
+    animation: fallFromTop 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
-  @keyframes rewardFly {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.35) rotate(0deg); }
-    18% { opacity: 1; }
-    100% {
+  .dice-gif,
+  .dice-result {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  @keyframes fallDown {
+    0% { transform: translateY(-100vh); }
+    60% { transform: translateY(20px); }
+    80% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+  @keyframes flyFromTopLeft {
+    0% {
+      transform: scale(0) rotate(0deg);
+      top: -10%;
+      left: -10%;
       opacity: 0;
-      transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.25) rotate(var(--rot));
+    }
+    20% { opacity: 1; }
+    100% {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1) rotate(720deg);
+      opacity: 1;
     }
   }
-  @keyframes diceRoll {
-    0% { transform: rotate(0deg) scale(0.7); }
-    18% { transform: rotate(90deg) scale(1.08); }
-    38% { transform: rotate(210deg) scale(0.94); }
-    62% { transform: rotate(390deg) scale(1.08); }
-    82% { transform: rotate(540deg) scale(0.96); }
-    100% { transform: rotate(720deg) scale(1); }
-  }
-  @keyframes dicePop {
-    0% { opacity: 1; transform: translateY(0) scale(1); }
-    70% { opacity: 1; transform: translateY(-6px) scale(1.08); }
-    100% { opacity: 0; transform: translateY(-22px) scale(0.86); }
+  @keyframes fallFromTop {
+    0% { transform: translateY(-100vh); }
+    100% { transform: translateY(0); }
   }
 
   /* ══════════════════════════════════════
@@ -1290,19 +1262,19 @@
       </div>
       <div class="interactive-panel-list">
         <button class="interactive-row" onclick="awardSelected('coin')">
-          <span class="interactive-icon" style="--icon-color:#ff8a3d;"><span>C</span></span>
+          <img src="asset/coin.png" alt="Coin" class="interactive-icon-img">
           <span class="interactive-row-value">(<span id="total-coins">0</span>)</span>
         </button>
         <button class="interactive-row" onclick="awardSelected('star')">
-          <span class="interactive-icon" style="--icon-color:#df4561;"><span>S</span></span>
+          <img src="asset/star.png" alt="Star" class="interactive-icon-img">
           <span class="interactive-row-value">(<span id="total-stars">0</span>)</span>
         </button>
         <button class="interactive-row" onclick="rollDice()">
-          <span class="interactive-icon" style="--icon-color:#2c8c7d;"><span>D</span></span>
+          <img src="asset/dice.png" alt="Dice" class="interactive-icon-img">
           <input class="interactive-dice-input" id="dice-max" type="number" min="1" max="9" value="9" onclick="event.stopPropagation()" onchange="setDiceMax(this.value)">
         </button>
         <button class="interactive-row" onclick="toggleKeyboardPanel(); playSfx('keyboard')">
-          <span class="interactive-icon" style="--icon-color:#506da8;"><span>K</span></span>
+          <img src="asset/keyboard.png" alt="Keyboard" class="interactive-icon-img">
           <span class="interactive-row-label">Keyboard</span>
         </button>
       </div>
@@ -2188,7 +2160,7 @@ function awardSelected(type) {
 
 function setDiceMax(value) {
   const parsed = parseInt(value, 10);
-  featureState.diceMax = Math.max(1, Math.min(9, Number.isNaN(parsed) ? 6 : parsed));
+  featureState.diceMax = Math.max(1, Math.min(9, Number.isNaN(parsed) ? 9 : parsed));
   const input = document.getElementById('dice-max');
   if (input) input.value = featureState.diceMax;
 }
@@ -2237,23 +2209,14 @@ function triggerRewardAnimation(type) {
   const layer = document.getElementById('reward-animation-layer');
   if (!layer) return;
   layer.innerHTML = '';
-  const burst = document.createElement('div');
-  burst.className = 'reward-burst';
-  const points = [
-    [-82, -130, -18], [72, -116, 24], [-120, -44, -36], [112, -32, 31],
-    [-78, 72, 16], [86, 78, -26], [-18, -152, 42], [24, 128, -44]
-  ];
-  points.forEach((point, index) => {
-    const token = document.createElement('div');
-    token.className = 'reward-token ' + (type === 'coin' ? 'coin' : 'star');
-    token.textContent = type === 'coin' ? 'C' : 'S';
-    token.style.setProperty('--tx', point[0] + 'px');
-    token.style.setProperty('--ty', point[1] + 'px');
-    token.style.setProperty('--rot', point[2] + 'deg');
-    token.style.setProperty('--delay', (index * 45) + 'ms');
-    burst.appendChild(token);
-  });
-  layer.appendChild(burst);
+  const container = document.createElement('div');
+  container.className = type === 'coin' ? 'coin-container' : 'star-container';
+  const img = document.createElement('img');
+  img.src = type === 'coin' ? 'asset/coin_x.png' : 'asset/star_x.png';
+  img.alt = type === 'coin' ? 'Coin' : 'Star';
+  img.className = type === 'coin' ? 'falling-coin' : 'star';
+  container.appendChild(img);
+  layer.appendChild(container);
   clearRewardLayer(type === 'star' ? 5000 : 3000);
 }
 
@@ -2261,15 +2224,23 @@ function triggerDiceAnimation(result) {
   const layer = document.getElementById('reward-animation-layer');
   if (!layer) return;
   layer.innerHTML = '';
+  const container = document.createElement('div');
+  container.className = 'dice-container';
   const dice = document.createElement('div');
-  dice.className = 'reward-dice';
-  dice.textContent = '?';
-  layer.appendChild(dice);
+  dice.className = 'dice';
+  const img = document.createElement('img');
+  img.src = 'asset/diceGIF.gif';
+  img.alt = 'Rolling Dice';
+  img.className = 'dice-gif';
+  dice.appendChild(img);
+  container.appendChild(dice);
+  layer.appendChild(container);
   window.clearTimeout(window.diceRollTimeout);
   window.clearTimeout(window.hideDiceTimeout);
   window.diceRollTimeout = window.setTimeout(() => {
-    dice.textContent = result;
-    dice.classList.add('final');
+    img.src = 'asset/dice' + result + '.png';
+    img.alt = 'Dice showing ' + result;
+    img.className = 'dice-result';
   }, 2000);
   window.hideDiceTimeout = window.setTimeout(() => {
     layer.innerHTML = '';
