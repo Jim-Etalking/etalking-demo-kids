@@ -591,6 +591,189 @@
     cursor: pointer;
   }
   .key-btn:hover { background: var(--theme-bg); }
+  .interactive-popover {
+    width: 320px;
+    max-width: calc(100vw - 190px);
+    padding: 16px;
+    background: #fff;
+    color: #111;
+    border: 3px solid #0d6efd;
+    border-right-width: 0;
+    border-radius: 16px 0 0 16px;
+    box-shadow: -6px 10px 34px rgba(0,0,0,0.28);
+  }
+  .interactive-popover .feature-popover-header {
+    color: #222;
+    border-bottom: 3px solid #0d6efd;
+    padding-bottom: 12px;
+    font-size: 27px;
+    justify-content: flex-start;
+  }
+  .interactive-popover .feature-close { margin-left: auto; color: #111; border-color: #ccc; background: #f6f6f6; }
+  .interactive-panel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    margin-top: 8px;
+  }
+  .interactive-row {
+    min-height: 83px;
+    border: 2px solid #c9c9c9;
+    border-radius: 7px;
+    background: #fff;
+    color: #111;
+    display: grid;
+    grid-template-columns: 78px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 17px;
+    cursor: pointer;
+    transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+  }
+  .interactive-row:hover {
+    border-color: #0d6efd;
+    transform: translateX(-2px);
+    box-shadow: 0 5px 14px rgba(13,110,253,0.14);
+  }
+  .interactive-row-value {
+    justify-self: end;
+    font-size: 26px;
+    font-weight: 900;
+  }
+  .interactive-row-label {
+    justify-self: end;
+    font-size: 22px;
+    font-weight: 900;
+  }
+  .interactive-dice-input {
+    justify-self: end;
+    width: 92px;
+    height: 41px;
+    border: 2px solid #d0d0d0;
+    border-radius: 4px;
+    color: #111;
+    background: #fff;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .interactive-icon {
+    width: 51px;
+    height: 51px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--icon-color);
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .interactive-icon::before,
+  .interactive-icon::after {
+    content: '';
+    position: absolute;
+    border: 3px solid currentColor;
+    border-radius: 50%;
+  }
+  .interactive-icon::before {
+    inset: 7px;
+  }
+  .interactive-icon::after {
+    width: 34px;
+    height: 34px;
+    transform: rotate(-24deg);
+    border-left-color: transparent;
+  }
+  .interactive-icon span {
+    position: relative;
+    z-index: 1;
+    transform: translateY(1px);
+  }
+  #reward-animation-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 245;
+  }
+  .reward-burst {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+  }
+  .reward-token {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 54px;
+    height: 54px;
+    margin-left: -27px;
+    margin-top: -27px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 29px;
+    font-weight: 900;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    box-shadow: 0 7px 18px rgba(0,0,0,0.18), inset 0 0 0 4px rgba(255,255,255,0.38);
+    animation: rewardFly 1.25s cubic-bezier(.16,.8,.28,1) forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  .reward-token.coin { background: #ff8a3d; }
+  .reward-token.star {
+    background: #df4561;
+    clip-path: polygon(50% 0%, 62% 33%, 98% 35%, 69% 56%, 79% 91%, 50% 70%, 21% 91%, 31% 56%, 2% 35%, 38% 33%);
+    border-radius: 0;
+  }
+  .reward-dice {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: 116px;
+    height: 116px;
+    margin-left: -58px;
+    margin-top: -58px;
+    border-radius: 20px;
+    background: #fff;
+    border: 5px solid #2368c4;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.30);
+    display: grid;
+    place-items: center;
+    color: #2368c4;
+    font-size: 54px;
+    font-weight: 900;
+    animation: diceRoll 2s ease-in-out forwards;
+  }
+  .reward-dice.final {
+    animation: dicePop 1.8s ease forwards;
+  }
+  @keyframes rewardFly {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.35) rotate(0deg); }
+    18% { opacity: 1; }
+    100% {
+      opacity: 0;
+      transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.25) rotate(var(--rot));
+    }
+  }
+  @keyframes diceRoll {
+    0% { transform: rotate(0deg) scale(0.7); }
+    18% { transform: rotate(90deg) scale(1.08); }
+    38% { transform: rotate(210deg) scale(0.94); }
+    62% { transform: rotate(390deg) scale(1.08); }
+    82% { transform: rotate(540deg) scale(0.96); }
+    100% { transform: rotate(720deg) scale(1); }
+  }
+  @keyframes dicePop {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    70% { opacity: 1; transform: translateY(-6px) scale(1.08); }
+    100% { opacity: 0; transform: translateY(-22px) scale(0.86); }
+  }
 
   /* ══════════════════════════════════════
      LEFT-BOTTOM: 1/4 CIRCLE DIAL (左下轉盤目錄)
@@ -1100,38 +1283,29 @@
       </button>
     </div>
 
-    <div class="feature-popover" id="feature-popover-interact" aria-live="polite">
+    <div class="feature-popover interactive-popover" id="feature-popover-interact" aria-live="polite">
       <div class="feature-popover-header">
-        <span><i class="ti ti-device-gamepad-2"></i> Interactive</span>
+        <span>🎮 Interactive</span>
         <button class="feature-close" onclick="closeFeaturePopovers()" title="Close"><i class="ti ti-x"></i></button>
       </div>
-      <div class="feature-row">
-        <span class="feature-pill"><i class="ti ti-star"></i> <span id="total-stars">0</span></span>
-        <span class="feature-pill"><i class="ti ti-coin"></i> <span id="total-coins">0</span></span>
-      </div>
-      <div class="feature-action-grid">
-        <button class="feature-action" onclick="awardSelected('star')">
-          <i class="ti ti-star"></i>
-          <span>Star</span>
+      <div class="interactive-panel-list">
+        <button class="interactive-row" onclick="awardSelected('coin')">
+          <span class="interactive-icon" style="--icon-color:#ff8a3d;"><span>C</span></span>
+          <span class="interactive-row-value">(<span id="total-coins">0</span>)</span>
         </button>
-        <button class="feature-action" onclick="awardSelected('coin')">
-          <i class="ti ti-coin"></i>
-          <span>Coin</span>
+        <button class="interactive-row" onclick="awardSelected('star')">
+          <span class="interactive-icon" style="--icon-color:#df4561;"><span>S</span></span>
+          <span class="interactive-row-value">(<span id="total-stars">0</span>)</span>
         </button>
-        <button class="feature-action" onclick="rollDice()">
-          <i class="ti ti-dice"></i>
-          <span>Dice <strong id="dice-result">-</strong></span>
+        <button class="interactive-row" onclick="rollDice()">
+          <span class="interactive-icon" style="--icon-color:#2c8c7d;"><span>D</span></span>
+          <input class="interactive-dice-input" id="dice-max" type="number" min="1" max="9" value="9" onclick="event.stopPropagation()" onchange="setDiceMax(this.value)">
         </button>
-        <button class="feature-action" onclick="toggleKeyboardPanel()">
-          <i class="ti ti-keyboard"></i>
-          <span>Keyboard</span>
+        <button class="interactive-row" onclick="toggleKeyboardPanel(); playSfx('keyboard')">
+          <span class="interactive-icon" style="--icon-color:#506da8;"><span>K</span></span>
+          <span class="interactive-row-label">Keyboard</span>
         </button>
       </div>
-      <div class="feature-row">
-        <span>Dice Max</span>
-        <input class="feature-number" id="dice-max" type="number" min="1" max="9" value="6" onchange="setDiceMax(this.value)">
-      </div>
-      <div class="student-list" id="interact-student-list"></div>
     </div>
 
     <div class="feature-popover" id="feature-popover-summary" aria-live="polite">
@@ -1143,6 +1317,7 @@
     </div>
 
     <div id="keyboard-panel" aria-label="On-screen keyboard"></div>
+    <div id="reward-animation-layer" aria-hidden="true"></div>
 
   </div>
 
@@ -1946,7 +2121,7 @@ const featureState = {
   active: null,
   selectedStudentId: demoStudents[0].id,
   sfxVolume: 70,
-  diceMax: 6,
+  diceMax: 9,
   stars: Object.fromEntries(demoStudents.map(student => [student.id, 0])),
   coins: Object.fromEntries(demoStudents.map(student => [student.id, 0]))
 };
@@ -1979,26 +2154,11 @@ function getTotalScores(type) {
 }
 
 function renderStudentFeatureLists() {
-  const interactList = document.getElementById('interact-student-list');
   const summaryList = document.getElementById('summary-student-list');
   const totalStars = document.getElementById('total-stars');
   const totalCoins = document.getElementById('total-coins');
   if (totalStars) totalStars.textContent = getTotalScores('star');
   if (totalCoins) totalCoins.textContent = getTotalScores('coin');
-
-  if (interactList) {
-    interactList.innerHTML = demoStudents.map(student => {
-      const selected = student.id === featureState.selectedStudentId;
-      return `
-        <button class="student-card" onclick="selectFeatureStudent('${student.id}')" style="${selected ? 'border-color: rgba(255,255,255,0.86); background: var(--theme-bg);' : ''}">
-          <span class="student-name">${student.firstName} ${student.lastName}</span>
-          <span class="student-stats">
-            <span><i class="ti ti-star"></i> ${featureState.stars[student.id] || 0}</span>
-            <span><i class="ti ti-coin"></i> ${featureState.coins[student.id] || 0}</span>
-          </span>
-        </button>`;
-    }).join('');
-  }
 
   if (summaryList) {
     summaryList.innerHTML = demoStudents.map(student => `
@@ -2022,6 +2182,7 @@ function awardSelected(type) {
   const bucket = type === 'star' ? featureState.stars : featureState.coins;
   bucket[featureState.selectedStudentId] = (bucket[featureState.selectedStudentId] || 0) + 1;
   playSfx(type === 'star' ? 'success' : 'coin');
+  triggerRewardAnimation(type);
   renderStudentFeatureLists();
 }
 
@@ -2035,9 +2196,8 @@ function setDiceMax(value) {
 function rollDice() {
   setDiceMax(document.getElementById('dice-max')?.value || featureState.diceMax);
   const result = Math.floor(Math.random() * featureState.diceMax) + 1;
-  const label = document.getElementById('dice-result');
-  if (label) label.textContent = result;
   playSfx('dice');
+  triggerDiceAnimation(result);
 }
 
 function setSfxVolume(value) {
@@ -2054,7 +2214,7 @@ function playSfx(type) {
   const gain = audioCtx.createGain();
   const now = audioCtx.currentTime;
   const volume = featureState.sfxVolume / 100;
-  const tone = type === 'dice' ? 220 : type === 'coin' ? 760 : 520;
+  const tone = type === 'dice' ? 220 : type === 'coin' ? 760 : type === 'keyboard' ? 420 : 520;
   osc.type = type === 'dice' ? 'square' : 'sine';
   osc.frequency.setValueAtTime(tone, now);
   osc.frequency.exponentialRampToValueAtTime(tone * 1.4, now + 0.12);
@@ -2064,6 +2224,56 @@ function playSfx(type) {
   osc.connect(gain).connect(audioCtx.destination);
   osc.start(now);
   osc.stop(now + 0.2);
+}
+
+function clearRewardLayer(delay = 0) {
+  const layer = document.getElementById('reward-animation-layer');
+  if (!layer) return;
+  window.clearTimeout(window.rewardClearTimeout);
+  window.rewardClearTimeout = window.setTimeout(() => { layer.innerHTML = ''; }, delay);
+}
+
+function triggerRewardAnimation(type) {
+  const layer = document.getElementById('reward-animation-layer');
+  if (!layer) return;
+  layer.innerHTML = '';
+  const burst = document.createElement('div');
+  burst.className = 'reward-burst';
+  const points = [
+    [-82, -130, -18], [72, -116, 24], [-120, -44, -36], [112, -32, 31],
+    [-78, 72, 16], [86, 78, -26], [-18, -152, 42], [24, 128, -44]
+  ];
+  points.forEach((point, index) => {
+    const token = document.createElement('div');
+    token.className = 'reward-token ' + (type === 'coin' ? 'coin' : 'star');
+    token.textContent = type === 'coin' ? 'C' : 'S';
+    token.style.setProperty('--tx', point[0] + 'px');
+    token.style.setProperty('--ty', point[1] + 'px');
+    token.style.setProperty('--rot', point[2] + 'deg');
+    token.style.setProperty('--delay', (index * 45) + 'ms');
+    burst.appendChild(token);
+  });
+  layer.appendChild(burst);
+  clearRewardLayer(type === 'star' ? 5000 : 3000);
+}
+
+function triggerDiceAnimation(result) {
+  const layer = document.getElementById('reward-animation-layer');
+  if (!layer) return;
+  layer.innerHTML = '';
+  const dice = document.createElement('div');
+  dice.className = 'reward-dice';
+  dice.textContent = '?';
+  layer.appendChild(dice);
+  window.clearTimeout(window.diceRollTimeout);
+  window.clearTimeout(window.hideDiceTimeout);
+  window.diceRollTimeout = window.setTimeout(() => {
+    dice.textContent = result;
+    dice.classList.add('final');
+  }, 2000);
+  window.hideDiceTimeout = window.setTimeout(() => {
+    layer.innerHTML = '';
+  }, 4000);
 }
 
 function toggleKeyboardPanel() {
