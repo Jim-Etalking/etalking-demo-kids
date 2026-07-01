@@ -666,16 +666,16 @@
   }
   .key-btn:hover { background: var(--theme-bg); }
   .interactive-popover {
-    right: 150px;
-    width: 224px;
-    max-width: calc(100vw - 166px);
-    padding: 10px 10px 11px;
-    background: linear-gradient(180deg, rgba(28,36,56,0.76), rgba(18,24,38,0.66));
+    right: 142px;
+    width: 204px;
+    max-width: calc(100vw - 158px);
+    padding: 9px 9px 10px;
+    background: rgba(18, 24, 38, 0.62);
     color: #fff;
     border: 1px solid rgba(255,255,255,0.38);
     border-right: none;
-    border-radius: 14px 0 0 14px;
-    box-shadow: -8px 8px 34px rgba(0,0,0,0.32), inset 0 0 22px rgba(255,255,255,0.10);
+    border-radius: 13px 0 0 13px;
+    box-shadow: -8px 8px 34px rgba(0,0,0,0.34), inset 0 0 22px rgba(255,255,255,0.11);
     backdrop-filter: blur(26px) saturate(150%);
     -webkit-backdrop-filter: blur(26px) saturate(150%);
   }
@@ -685,9 +685,9 @@
     right: -12px;
     top: 50%;
     width: 12px;
-    height: 88px;
+    height: 76px;
     transform: translateY(-50%);
-    background: linear-gradient(180deg, rgba(28,36,56,0.76), rgba(18,24,38,0.66));
+    background: rgba(18, 24, 38, 0.62);
     border-top: 1px solid rgba(255,255,255,0.30);
     border-bottom: 1px solid rgba(255,255,255,0.30);
     box-shadow: inset 0 0 14px rgba(255,255,255,0.08);
@@ -696,30 +696,35 @@
   }
   .interactive-popover .feature-popover-header {
     color: #fff;
-    border-bottom: 1px solid rgba(255,255,255,0.26);
-    padding-bottom: 7px;
-    font-size: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.22);
+    padding: 0 1px 6px;
+    font-size: 13px;
     justify-content: flex-start;
     text-shadow: 0 1px 5px rgba(0,0,0,0.32);
+  }
+  .interactive-popover .feature-popover-header > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
   .interactive-popover .feature-close { margin-left: auto; }
   .interactive-panel-list {
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    margin-top: 2px;
+    gap: 6px;
+    margin-top: 1px;
   }
   .interactive-row {
-    min-height: 48px;
+    min-height: 42px;
     border: 1px solid rgba(255,255,255,0.28);
-    border-radius: 8px;
-    background: rgba(255,255,255,0.10);
+    border-radius: 9px;
+    background: rgba(255,255,255,0.12);
     color: #fff;
     display: grid;
-    grid-template-columns: 42px 1fr;
+    grid-template-columns: 36px 1fr;
     align-items: center;
-    gap: 7px;
-    padding: 5px 9px;
+    gap: 6px;
+    padding: 4px 8px;
     cursor: pointer;
     box-shadow: inset 0 0 12px rgba(255,255,255,0.08);
     transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
@@ -732,27 +737,27 @@
   }
   .interactive-row-value {
     justify-self: end;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 900;
     text-shadow: 0 1px 4px rgba(0,0,0,0.38);
   }
   .interactive-row-label {
     justify-self: end;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
     text-shadow: 0 1px 4px rgba(0,0,0,0.38);
   }
   .interactive-dice-input {
     justify-self: end;
-    width: 48px;
-    height: 28px;
+    width: 42px;
+    height: 26px;
     border: 1px solid rgba(255,255,255,0.32);
     border-radius: 8px;
     color: #fff;
     background: rgba(255,255,255,0.14);
     text-align: center;
     font-weight: 900;
-    font-size: 14px;
+    font-size: 13px;
     box-shadow: inset 0 0 10px rgba(255,255,255,0.08);
   }
   .interactive-dice-input:focus {
@@ -761,8 +766,8 @@
     box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 10px rgba(255,255,255,0.08);
   }
   .interactive-icon-img {
-    width: 34px;
-    height: 34px;
+    width: 31px;
+    height: 31px;
     object-fit: contain;
     filter: drop-shadow(0 3px 7px rgba(0,0,0,0.28));
   }
@@ -1343,7 +1348,7 @@
 
     <div class="feature-popover interactive-popover" id="feature-popover-interact" aria-live="polite">
       <div class="feature-popover-header">
-        <span>🎮 Interactive</span>
+        <span><i class="ti ti-device-gamepad-2"></i> Interactive</span>
         <button class="feature-close" onclick="closeFeaturePopovers()" title="Close"><i class="ti ti-x"></i></button>
       </div>
       <div class="interactive-panel-list">
