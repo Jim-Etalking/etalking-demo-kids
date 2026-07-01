@@ -2417,6 +2417,24 @@ setInterval(() => {
   renderTimer();
 }, 1000);
 
+let lastWheelPageAt = 0;
+const WHEEL_PAGE_COOLDOWN = 420;
+const WHEEL_PAGE_THRESHOLD = 18;
+
+function handlePageWheel(e) {
+  if (!pdfDoc) return;
+  if (Math.abs(e.deltaY) < WHEEL_PAGE_THRESHOLD || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastWheelPageAt < WHEEL_PAGE_COOLDOWN) return;
+
+  lastWheelPageAt = now;
+  changePage(e.deltaY > 0 ? 1 : -1);
+}
+
+document.getElementById('pdf-area').addEventListener('wheel', handlePageWheel, { passive: false });
+
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changePage(1);
