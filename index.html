@@ -592,23 +592,39 @@
   }
   .key-btn:hover { background: var(--theme-bg); }
   .interactive-popover {
-    right: 154px;
-    width: 248px;
-    max-width: calc(100vw - 174px);
-    padding: 12px;
-    background: rgba(18, 24, 38, 0.82);
+    right: 150px;
+    width: 224px;
+    max-width: calc(100vw - 166px);
+    padding: 10px 10px 11px;
+    background: linear-gradient(180deg, rgba(28,36,56,0.76), rgba(18,24,38,0.66));
     color: #fff;
-    border: 1px solid rgba(255,255,255,0.42);
-    border-radius: 14px;
-    box-shadow: -8px 12px 40px rgba(0,0,0,0.36), inset 0 0 22px rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.38);
+    border-right: none;
+    border-radius: 14px 0 0 14px;
+    box-shadow: -8px 8px 34px rgba(0,0,0,0.32), inset 0 0 22px rgba(255,255,255,0.10);
     backdrop-filter: blur(26px) saturate(150%);
     -webkit-backdrop-filter: blur(26px) saturate(150%);
   }
+  .interactive-popover::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    width: 12px;
+    height: 88px;
+    transform: translateY(-50%);
+    background: linear-gradient(180deg, rgba(28,36,56,0.76), rgba(18,24,38,0.66));
+    border-top: 1px solid rgba(255,255,255,0.30);
+    border-bottom: 1px solid rgba(255,255,255,0.30);
+    box-shadow: inset 0 0 14px rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+  }
   .interactive-popover .feature-popover-header {
     color: #fff;
-    border-bottom: 2px solid var(--theme-hex);
-    padding-bottom: 9px;
-    font-size: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.26);
+    padding-bottom: 7px;
+    font-size: 15px;
     justify-content: flex-start;
     text-shadow: 0 1px 5px rgba(0,0,0,0.32);
   }
@@ -616,20 +632,20 @@
   .interactive-panel-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
     margin-top: 2px;
   }
   .interactive-row {
-    min-height: 58px;
-    border: 1.5px solid rgba(255,255,255,0.35);
-    border-radius: 9px;
-    background: rgba(255,255,255,0.12);
+    min-height: 48px;
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.10);
     color: #fff;
     display: grid;
-    grid-template-columns: 50px 1fr;
+    grid-template-columns: 42px 1fr;
     align-items: center;
-    gap: 8px;
-    padding: 7px 11px;
+    gap: 7px;
+    padding: 5px 9px;
     cursor: pointer;
     box-shadow: inset 0 0 12px rgba(255,255,255,0.08);
     transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
@@ -642,27 +658,27 @@
   }
   .interactive-row-value {
     justify-self: end;
-    font-size: 19px;
+    font-size: 17px;
     font-weight: 900;
     text-shadow: 0 1px 4px rgba(0,0,0,0.38);
   }
   .interactive-row-label {
     justify-self: end;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 900;
     text-shadow: 0 1px 4px rgba(0,0,0,0.38);
   }
   .interactive-dice-input {
     justify-self: end;
-    width: 58px;
-    height: 31px;
-    border: 1.5px solid rgba(255,255,255,0.34);
+    width: 48px;
+    height: 28px;
+    border: 1px solid rgba(255,255,255,0.32);
     border-radius: 8px;
     color: #fff;
     background: rgba(255,255,255,0.14);
     text-align: center;
     font-weight: 900;
-    font-size: 16px;
+    font-size: 14px;
     box-shadow: inset 0 0 10px rgba(255,255,255,0.08);
   }
   .interactive-dice-input:focus {
@@ -671,8 +687,8 @@
     box-shadow: 0 0 0 2px var(--theme-bg), inset 0 0 10px rgba(255,255,255,0.08);
   }
   .interactive-icon-img {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     object-fit: contain;
     filter: drop-shadow(0 3px 7px rgba(0,0,0,0.28));
   }
@@ -1271,7 +1287,7 @@
         </button>
         <button class="interactive-row" onclick="rollDice()">
           <img src="asset/dice.png" alt="Dice" class="interactive-icon-img">
-          <input class="interactive-dice-input" id="dice-max" type="number" min="1" max="9" value="9" onclick="event.stopPropagation()" onchange="setDiceMax(this.value)">
+          <input class="interactive-dice-input" id="dice-max" type="number" min="1" max="6" value="6" onclick="event.stopPropagation()" onchange="setDiceMax(this.value)">
         </button>
         <button class="interactive-row" onclick="toggleKeyboardPanel(); playSfx('keyboard')">
           <img src="asset/keyboard.png" alt="Keyboard" class="interactive-icon-img">
@@ -2093,7 +2109,7 @@ const featureState = {
   active: null,
   selectedStudentId: demoStudents[0].id,
   sfxVolume: 70,
-  diceMax: 9,
+  diceMax: 6,
   stars: Object.fromEntries(demoStudents.map(student => [student.id, 0])),
   coins: Object.fromEntries(demoStudents.map(student => [student.id, 0]))
 };
@@ -2160,7 +2176,7 @@ function awardSelected(type) {
 
 function setDiceMax(value) {
   const parsed = parseInt(value, 10);
-  featureState.diceMax = Math.max(1, Math.min(9, Number.isNaN(parsed) ? 9 : parsed));
+  featureState.diceMax = Math.max(1, Math.min(6, Number.isNaN(parsed) ? 6 : parsed));
   const input = document.getElementById('dice-max');
   if (input) input.value = featureState.diceMax;
 }
