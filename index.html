@@ -432,6 +432,63 @@
   .fab-btn:hover { transform: translateX(-5px); background: var(--theme-bg); box-shadow: 0 0 0 2px rgba(255,255,255,0.18), 0 6px 18px rgba(0,0,0,0.28), inset 0 0 14px rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.9); }
   .fab-btn.active { background: var(--theme-hex); color: #fff; border-color: var(--theme-hex); box-shadow: 0 0 16px var(--theme-hex); }
   .fab-btn i { font-size: 16px; }
+  .sound-drawer {
+    width: 100%;
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    margin-top: -10px;
+    transition: grid-template-rows 0.22s ease, opacity 0.18s ease, margin 0.2s ease;
+  }
+  .sound-drawer.show {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    margin-top: -4px;
+  }
+  .sound-drawer-inner {
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 9px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.26);
+    box-shadow: inset 0 0 12px rgba(255,255,255,0.08);
+  }
+  .sound-drawer-inner i {
+    color: rgba(255,255,255,0.88);
+    font-size: 16px;
+  }
+  .sound-slider {
+    flex: 1;
+    min-width: 92px;
+    accent-color: var(--theme-hex);
+  }
+  .sound-volume-label {
+    min-width: 34px;
+    text-align: right;
+    color: rgba(255,255,255,0.84);
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .sound-test-btn {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.32);
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 8px rgba(255,255,255,0.08);
+  }
+  .sound-test-btn:hover {
+    background: var(--theme-bg);
+    border-color: rgba(255,255,255,0.70);
+  }
 
   .feature-popover {
     position: absolute;
@@ -1246,6 +1303,16 @@
         <button class="fab-btn" id="fab-sound" onclick="toggleFab('sound')">
           <i class="ti ti-volume"></i> Sound Effects
         </button>
+        <div class="sound-drawer" id="sound-drawer">
+          <div class="sound-drawer-inner">
+            <i class="ti ti-volume-2"></i>
+            <input class="sound-slider" id="sfx-volume" type="range" min="0" max="100" value="70" oninput="setSfxVolume(this.value)">
+            <span class="sound-volume-label" id="sfx-volume-label">70%</span>
+            <button class="sound-test-btn" onclick="event.stopPropagation(); playSfx('star')" title="Test sound">
+              <i class="ti ti-player-play"></i>
+            </button>
+          </div>
+        </div>
         <button class="fab-btn" id="fab-interact" onclick="toggleFab('interact')">
           <i class="ti ti-device-gamepad-2"></i> Interact
         </button>
@@ -1253,22 +1320,6 @@
           <i class="ti ti-chart-bar"></i> Summary
         </button>
       </div>
-    </div>
-
-    <div class="feature-popover" id="feature-popover-sound" aria-live="polite">
-      <div class="feature-popover-header">
-        <span><i class="ti ti-volume"></i> Sound Effects</span>
-        <button class="feature-close" onclick="closeFeaturePopovers()" title="Close"><i class="ti ti-x"></i></button>
-      </div>
-      <div class="feature-row">
-        <span>Volume</span>
-        <input class="feature-range" id="sfx-volume" type="range" min="0" max="100" value="70" oninput="setSfxVolume(this.value)">
-        <span id="sfx-volume-label">70%</span>
-      </div>
-      <button class="feature-action" onclick="playSfx('success')" style="min-height:48px;">
-        <i class="ti ti-player-play"></i>
-        <span>Test Sound</span>
-      </button>
     </div>
 
     <div class="feature-popover interactive-popover" id="feature-popover-interact" aria-live="polite">
@@ -2107,6 +2158,7 @@ const demoStudents = [
 ];
 const featureState = {
   active: null,
+  soundOpen: false,
   selectedStudentId: demoStudents[0].id,
   sfxVolume: 70,
   diceMax: 6,
@@ -2114,25 +2166,40 @@ const featureState = {
   coins: Object.fromEntries(demoStudents.map(student => [student.id, 0]))
 };
 let audioCtx = null;
+const sfxSources = {
+  coin: 'asset/coin.mp3',
+  star: 'asset/star.mp3',
+  dice: 'asset/dice.mp3',
+  keyboard: 'asset/keyboard.mp3'
+};
 
 function toggleFab(name) {
-  featureState.active = featureState.active === name ? null : name;
+  if (name === 'sound') {
+    featureState.soundOpen = !featureState.soundOpen;
+    featureState.active = null;
+  } else {
+    featureState.active = featureState.active === name ? null : name;
+    featureState.soundOpen = false;
+  }
   updateFeatureUI();
 }
 
 function closeFeaturePopovers() {
   featureState.active = null;
+  featureState.soundOpen = false;
   updateFeatureUI();
 }
 
 function updateFeatureUI() {
   ['sound', 'interact', 'summary'].forEach(name => {
-    const isActive = featureState.active === name;
+    const isActive = name === 'sound' ? featureState.soundOpen : featureState.active === name;
     const btn = document.getElementById('fab-' + name);
     const popover = document.getElementById('feature-popover-' + name);
     if (btn) btn.classList.toggle('active', isActive);
     if (popover) popover.classList.toggle('show', isActive);
   });
+  const soundDrawer = document.getElementById('sound-drawer');
+  if (soundDrawer) soundDrawer.classList.toggle('show', featureState.soundOpen);
   renderStudentFeatureLists();
 }
 
@@ -2169,7 +2236,7 @@ function selectFeatureStudent(studentId) {
 function awardSelected(type) {
   const bucket = type === 'star' ? featureState.stars : featureState.coins;
   bucket[featureState.selectedStudentId] = (bucket[featureState.selectedStudentId] || 0) + 1;
-  playSfx(type === 'star' ? 'success' : 'coin');
+  playSfx(type);
   triggerRewardAnimation(type);
   renderStudentFeatureLists();
 }
@@ -2197,6 +2264,25 @@ function setSfxVolume(value) {
 
 function playSfx(type) {
   if (featureState.sfxVolume <= 0) return;
+  const src = sfxSources[type];
+  if (src) {
+    try {
+      const audio = new Audio(src);
+      audio.volume = featureState.sfxVolume / 100;
+      const played = audio.play();
+      if (played && typeof played.catch === 'function') {
+        played.catch(() => playFallbackTone(type));
+      }
+      return;
+    } catch (e) {
+      playFallbackTone(type);
+      return;
+    }
+  }
+  playFallbackTone(type);
+}
+
+function playFallbackTone(type) {
   audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
